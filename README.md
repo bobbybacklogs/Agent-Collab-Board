@@ -127,6 +127,24 @@ README.md
 
 ---
 
+## Live Dashboard
+
+The same repository can be viewed as a local dashboard in a browser.
+
+It renders the board as columns, opens project cards and their task boards, and refreshes on its own whenever the Markdown changes.
+
+The dashboard is read-only. It never edits the files the board reads from — the repository remains the source of truth.
+
+Run it with a single command from the `ui/` directory:
+
+```text
+node server.js
+```
+
+Then open the printed local address. Keep `BOARD.md`, `projects/`, and `tasks/` in mind: editing any of them updates the open page automatically.
+
+---
+
 ## Core Files
 
 ### `BOARD.md`

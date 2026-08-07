@@ -1,12 +1,12 @@
 # Project Board
 
 ![Board](https://img.shields.io/badge/board-portfolio-0969da)
-![Projects](https://img.shields.io/badge/projects-0-6e7781)
-![Active](https://img.shields.io/badge/active-0-238636)
+![Projects](https://img.shields.io/badge/projects-1-0969da)
+![Active](https://img.shields.io/badge/active-1-238636)
 ![Blocked](https://img.shields.io/badge/blocked-0-da3633)
 ![Review](https://img.shields.io/badge/review-0-8250df)
 ![Complete](https://img.shields.io/badge/complete-0-238636)
-![Updated](https://img.shields.io/badge/updated-YYYY--MM--DD-6e7781)
+![Updated](https://img.shields.io/badge/updated-2026--08--07-6e7781)
 
 > Repository-wide project overview and coordination board.
 > Detailed project state lives in `/projects`. Detailed task execution lives in `/tasks`.
@@ -18,39 +18,39 @@
 | Field | Value |
 | --- | --- |
 | **Board Status** | `Active` |
-| **Total Projects** | `0` |
-| **Active Projects** | `0` |
+| **Total Projects** | `1` |
+| **Active Projects** | `1` |
 | **Blocked Projects** | `0` |
 | **Projects in Review** | `0` |
 | **Completed Projects** | `0` |
-| **Current Focus** | `<PROJECT_OR_NONE>` |
-| **Last Updated** | `YYYY-MM-DD` |
+| **Current Focus** | `Dashboard Board UI` |
+| **Last Updated** | `2026-08-07` |
 
 ---
 
 ## Current Focus
 
-![Focus](https://img.shields.io/badge/focus-none-6e7781)
+![Focus](https://img.shields.io/badge/focus-dashboard%20board%20ui-238636)
 
 **Primary Project**
 
-`<PROJECT_NAME_OR_NONE>`
+`Dashboard Board UI`
 
 **Current Objective**
 
-`<CURRENT_PORTFOLIO_LEVEL_OBJECTIVE>`
+`Provide a local, read-only dashboard for the Markdown board that live-updates on repo changes.`
 
 **Active Task**
 
-`<TASK_ID_AND_TITLE_OR_NONE>`
+`None — UIB-004 in Review`
 
 **Next Action**
 
-`<SINGLE_CONCRETE_NEXT_ACTION>`
+`Open the dashboard, confirm the project drawer and task detail views, and accept UIB-004.`
 
 **Why This Is Current**
 
-`<SHORT_REASON_THIS_PROJECT_OR_TASK_HAS_PRIORITY>`
+`The user requested the dashboard; it is the only active project and is in active development.`
 
 ---
 
@@ -86,7 +86,38 @@ _No projects currently ready._
 
 > Projects currently receiving active execution.
 
-_No active projects._
+### Local Board Dashboard
+
+![Status](https://img.shields.io/badge/status-active-238636)
+![Priority](https://img.shields.io/badge/priority-medium-d29922)
+![Progress](https://img.shields.io/badge/progress-80%25-0969da)
+![Blocked](https://img.shields.io/badge/blocked-no-238636)
+
+**Project:** [`projects/ui-dashboard.md`](projects/ui-dashboard.md)  
+**Tasks:** [`tasks/ui-dashboard-tasks.md`](tasks/ui-dashboard-tasks.md)
+
+| Field | Value |
+| --- | --- |
+| **Project ID** | `UIB` |
+| **Status** | `Active` |
+| **Priority** | `Medium` |
+| **Progress** | `80%` |
+| **Current Task** | `None` |
+| **Next Task** | `UIB-004 Review` |
+| **Target** | `2026-08-07` |
+| **Updated** | `2026-08-07` |
+
+**Objective**
+
+A local, zero-dependency, read-only web dashboard for the Markdown board that live-updates when repo files change.
+
+**Current State**
+
+Parser, server, and frontend implemented; server + live reload validated; dashboard frontend (UIB-003) visually accepted.
+
+**Next Action**
+
+Open `http://localhost:4173`, click the `ui-dashboard` project card and a task card to confirm the drawer/task views, then accept UIB-004.
 
 ---
 
@@ -271,7 +302,8 @@ Task-level review remains in the task board.
 
 | Date | Change |
 | --- | --- |
-| `YYYY-MM-DD` | Board created. |
+| `2026-08-07` | Board created with initial template state. |
+| `2026-08-07` | `Local Dashboard UI` project added to Active with project card, project file, and task board; counts and focus updated. |
 
 Good entries include:
 

@@ -1,0 +1,13 @@
+{
+  "name": "local-board-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local read-only dashboard for the Agent Collab Board Markdown state, with live reload.",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
