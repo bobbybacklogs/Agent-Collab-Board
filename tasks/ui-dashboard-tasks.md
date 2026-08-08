@@ -5,8 +5,8 @@
 ![Ready](https://img.shields.io/badge/ready-0-1f6feb)
 ![In Progress](https://img.shields.io/badge/in%20progress-0-d29922)
 ![Blocked](https://img.shields.io/badge/blocked-0-da3633)
-![Review](https://img.shields.io/badge/review-1-8250df)
-![Done](https://img.shields.io/badge/done-4-238636)
+![Review](https://img.shields.io/badge/review-2-8250df)
+![Done](https://img.shields.io/badge/done-5-238636)
 ![Updated](https://img.shields.io/badge/updated-2026-08-07-6e7781)
 
 [Board](../BOARD.md) · [Project](../projects/ui-dashboard.md)
@@ -26,8 +26,8 @@
 | **Task Prefix** | `UIB` |
 | **Board Status** | `Active` |
 | **Last Updated** | `2026-08-07` |
-| **Active Task** | `None` |
-| **Next Ready Task** | `None — UIB-004 in Review` |
+| **Active Task** | `UIB-007 editor UI (validation)` |
+| **Next Ready Task** | `None open` |
 
 ---
 
@@ -71,9 +71,7 @@ _No tasks currently in backlog._
 
 > Tasks that are sufficiently defined and can be started.
 
-_No tasks currently ready._
 
----
 
 # In Progress
 
@@ -163,7 +161,68 @@ Open the dashboard, open the `ui-dashboard` project card, and open a task card t
 | `2026-08-07` | Task created. |
 | `2026-08-07` | Implementation complete; moved to Review pending visual acceptance. |
 
----
+
+### `UIB-007` — Editor UI for the drawer and task modal
+
+![Status](https://img.shields.io/badge/status-review-8250df)
+![Priority](https://img.shields.io/badge/priority-high-f85149)
+![Type](https://img.shields.io/badge/type-task-0969da)
+![Blocked](https://img.shields.io/badge/blocked-no-238636)
+
+| Field | Value |
+| --- | --- |
+| **ID** | `UIB-007` |
+| **Status** | `Review` |
+| **Priority** | `High` |
+| **Type** | `Task` |
+| **Assigned** | `Agent` |
+| **Created** | `2026-08-07` |
+| **Started** | `2026-08-07` |
+| **Updated** | `2026-08-07` |
+| **Completed** | `—` |
+
+**Goal**
+
+Add an Edit button to the project drawer and task modal that opens an inline editor form and saves via `POST /api/write` (task-scoped for task fields), updating the rendered view immediately.
+
+### Acceptance Criteria
+
+- [x] Project drawer has an Edit entry that toggles the read-only view into an inline editor.
+- [x] Editor forms cover status, priority, progress, objective, current state fields, and success-criteria list lines.
+- [x] Task modal editor covers task status (workflow), priority, and task text lines (scoped KV/badge/check ops).
+- [x] Saving the form calls `POST /api/write` and refreshes the relevant part of the view.
+- [x] Cancel leaves the drawer/modal unchanged.
+
+### Dependencies
+
+- `UIB-006` (write endpoint)
+
+### Blockers
+
+`None`
+
+### Files / Resources
+
+- `ui/public/app.js` (editor forms + save handlers)
+- `ui/lib/write.js` (task-scoped taskKV/taskBadge/taskLabel/taskCheck ops)
+- `ui/server.js` (`POST /api/write` + `/api/state`)
+
+### Implementation Notes
+
+- Drawer edit form saves badge/`kv`/section/label/check ops to `projects/<slug>.md` and syncs BOARD.md card state+priority/progress badges via `projectState`.
+- Task edit uses task-scoped ops (`task`, `taskKV`, `taskBadge`, `taskLabel`, `taskCheck`) so one task's fields cannot clobber another task's fields.
+- Save re-fetches `/api/state` and re-renders the open drawer/modal; server SSE also broadcasts after a successful write.
+
+### Acceptance
+
+Open the dashboard, click a project card, then Edit; make edits and confirm the card/drawer reflect changes live without a full page reload; repeat in the task modal.
+
+### Task History
+
+| Date | Change |
+| --- | --- |
+| `2026-08-07` | Task created. |
+| `2026-08-07` | Editor UI implemented and validated via live `/api/write` round-trips; moved to Review pending visual acceptance. |
 
 # Done
 
@@ -371,6 +430,72 @@ Verify the server, parser, and live reload work end to end, including empty-boar
 | `2026-08-07` | Task created. |
 | `2026-08-07` | Completed (server-side validation). |
 
+### `UIB-006` — Surgical write layer for Markdown state
+
+![Status](https://img.shields.io/badge/status-done-238636)
+![Priority](https://img.shields.io/badge/priority-high-f85149)
+![Type](https://img.shields.io/badge/type-task-0969da)
+![Blocked](https://img.shields.io/badge/blocked-no-238636)
+
+| Field | Value |
+| --- | --- |
+| **ID** | `UIB-006` |
+| **Status** | `Done` |
+| **Priority** | `High` |
+| **Type** | `Task` |
+| **Assigned** | `Agent` |
+| **Created** | `2026-08-07` |
+| **Started** | `2026-08-07` |
+| **Updated** | `2026-08-07` |
+| **Completed** | `2026-08-07` |
+
+**Goal**
+
+Provide a server-side surgical writer for the project Markdown files (project status/priority/objective and current state) and the task board (workflow moves, priorities, criteria toggles) that updates only the requested line/blocks, plus a write API that re-notifies connected sessions after a successful write.
+
+### Acceptance Criteria
+
+- [x] `ui/lib/write.js` applies a small set of surgical ops against a project or task board file.
+- [x] The server exposes `POST /api/write` that calls the writer and, on success, notifies open sessions.
+- [x] Write requests validate the target file (projects/ or tasks/) and reject values outside the allowed enumerations.
+- [x] Badges and structured fields are written without rewriting the surrounding file.
+- [x] The engine dispatches the new task board state back to open sessions.
+
+### Dependencies
+
+- `UIB-001` (parser), `UIB-002` (server/SSE)
+
+### Blockers
+
+`None`
+
+### Files / Resources
+
+- `ui/lib/write.js`
+- `ui/server.js`
+
+### Implementation Notes
+
+- Ops: badge, kv, label, section, check, task (workflow move), projectState (BOARD.md card move), taskKV/taskBadge/taskLabel/taskCheck (task-scoped edits).
+- Round-trip ops against the same files the parser reads, then assertion of re-parse in a Node check.
+
+### Validation
+
+- [x] `node --check` passes for `write.js` and `server.js`.
+- [x] Node round-trip: badge, table cell, section body, checklist toggle, board card move, scoped task edits apply and re-parse (verified via live `/api/write` against a temp repo copy).
+- [x] `POST /api/write` with invalid paths/values/enumerations returns `400`/`422` (verified live).
+
+### Acceptance
+
+A written edit appears on the board/at the card with no manual restart.
+
+### Task History
+
+| Date | Change |
+| --- | --- |
+| `2026-08-07` | Task created. |
+| `2026-08-07` | Write layer + `/api/write` implemented and validated live; moved to Done. |
+
 ---
 
 ## Progress
@@ -381,13 +506,13 @@ Verify the server, parser, and live reload work end to end, including empty-boar
 | Ready | 0 |
 | In Progress | 0 |
 | Blocked | 0 |
-| Review | 1 |
-| Done | 4 |
-| **Total** | **5** |
+| Review | 2 |
+| Done | 5 |
+| **Total** | **7** |
 
-**Completion:** `80%`
+**Completion:** `71%`
 
-> Completion reflects done tasks against total (`4/5`). UIB-004 awaits visual acceptance review before entering `Done`.
+> Completion reflects done tasks against total (`5/7`). UIB-004 and UIB-007 await visual acceptance review.
 
 ---
 
@@ -403,6 +528,11 @@ Verify the server, parser, and live reload work end to end, including empty-boar
 | `2026-08-07` | `UIB-004` | Moved to Review — implementation done, visual accept pending. |
 | `2026-08-07` | `UIB-005` | Done — end-to-end validation passed. |
 | `2026-08-07` | `UIB-003` | Column/custom-column and sidebar polish accepted; moved to Done. |
+| `2026-08-07` | `UIB-006` | Added: surgical write layer for edit-from-UI (DEC-003). |
+| `2026-08-07` | `UIB-007` | Added: editor UI for draw tasks; depends on UIB-006. |
+| `2026-08-07` | `UIB-006` | Moved Ready → In Progress. |
+| `2026-08-07` | `UIB-006` | Done — write layer + `/api/write` validated live. |
+| `2026-08-07` | `UIB-007` | Moved Ready → Review — editor implemented, visual accept pending. |
 
 ---
 
@@ -424,6 +554,8 @@ Verify the server, parser, and live reload work end to end, including empty-boar
 | `UIB-003` | `UIB-002` | Server first | `Resolved` |
 | `UIB-004` | `UIB-003` | Portfolio first | `Resolved` |
 | `UIB-005` | `UIB-004` | Implementation first | `Done` |
+| `UIB-006` | `UIB-001`, `UIB-002` | Parser + server | `Resolved` |
+| `UIB-007` | `UIB-006` | Write API first | `Resolved` |
 
 ---
 
@@ -447,7 +579,7 @@ Board: [`../BOARD.md`](../BOARD.md)
 
 ### Task Selection
 
-Continue the current `In Progress`. Otherwise pull `Ready`, respect dependencies and blockers. Visual acceptance of UIB-004 is the current review queue item.
+Continue the current `In Progress`. Otherwise pull `Ready`, respect dependencies and blockers. Visual acceptance of UIB-004 and UIB-007 is the current review queue item.
 
 ### Creating/Moving Tasks
 
@@ -458,7 +590,7 @@ Continue the current `In Progress`. Otherwise pull `Ready`, respect dependencies
 
 ### Completion Rules
 
-A task may enter `Done` only when its goal is achieved, acceptance criteria are satisfied, and validation actually passed. UIB-004 remains in `Review` until a browser visual pass confirms rendering.
+A task may enter `Done` only when its goal is achieved, acceptance criteria are satisfied, and validation actually passed. UIB-004 and UIB-007 remain in `Review` until a browser visual pass confirms rendering.
 
 ### Acceptance Criteria Rules
 
@@ -491,7 +623,6 @@ State flows upward when needed: implementation → task board → project file i
 
 Lower-level canonical state wins: task detail → this file; project detail → project file; portfolio summary → `BOARD.md`.
 
----
 
 ## End-of-Session Protocol
 

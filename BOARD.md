@@ -38,15 +38,15 @@
 
 **Current Objective**
 
-`Provide a local, read-only dashboard for the Markdown board that live-updates on repo changes.`
+`Provide a local, zero-dependency dashboard for the Markdown board that live-updates on repo changes and supports surgical field edits from the UI.`
 
 **Active Task**
 
-`None — UIB-004 in Review`
+`UIB-007 — Editor UI (review)`
 
 **Next Action**
 
-`Open the dashboard, confirm the project drawer and task detail views, and accept UIB-004.`
+`Accept the editor UI (UIB-007) in a browser pass, then accept UIB-004 detail-view review; the write layer (UIB-006) is done and live-validated.`
 
 **Why This Is Current**
 
@@ -90,7 +90,7 @@ _No projects currently ready._
 
 ![Status](https://img.shields.io/badge/status-active-238636)
 ![Priority](https://img.shields.io/badge/priority-medium-d29922)
-![Progress](https://img.shields.io/badge/progress-80%25-0969da)
+![Progress](https://img.shields.io/badge/progress-0%25-0969da)
 ![Blocked](https://img.shields.io/badge/blocked-no-238636)
 
 **Project:** [`projects/ui-dashboard.md`](projects/ui-dashboard.md)  
@@ -101,9 +101,9 @@ _No projects currently ready._
 | **Project ID** | `UIB` |
 | **Status** | `Active` |
 | **Priority** | `Medium` |
-| **Progress** | `80%` |
-| **Current Task** | `None` |
-| **Next Task** | `UIB-004 Review` |
+| **Progress** | `85%` |
+| **Current Task** | `UIB-007 editor UI (validation)` |
+| **Next Task** | `None open` |
 | **Target** | `2026-08-07` |
 | **Updated** | `2026-08-07` |
 
@@ -113,11 +113,11 @@ A local, zero-dependency, read-only web dashboard for the Markdown board that li
 
 **Current State**
 
-Parser, server, and frontend implemented; server + live reload validated; dashboard frontend (UIB-003) visually accepted.
+Parser, server, and frontend implemented; server + live reload validated; dashboard frontend (UIB-003) visually accepted. Write layer + `/api/write` (UIB-006) complete and live-validated; editor UI (UIB-007) implemented, in review.
 
 **Next Action**
 
-Open `http://localhost:4173`, click the `ui-dashboard` project card and a task card to confirm the drawer/task views, then accept UIB-004.
+Accept the editor UI (UIB-007) in a browser pass, then accept UIB-004 detail-view review to finish the remaining criterion.
 
 ---
 
@@ -304,6 +304,8 @@ Task-level review remains in the task board.
 | --- | --- |
 | `2026-08-07` | Board created with initial template state. |
 | `2026-08-07` | `Local Dashboard UI` project added to Active with project card, project file, and task board; counts and focus updated. |
+| `2026-08-07` | UI editor scope authorized (DEC-003); UIB-006/UIB-007 added; focus moved to write layer + editor UI. |
+| `2026-08-07` | Write layer (UIB-006) completed and live-validated; editor UI (UIB-007) implemented and moved to Review; progress 85%. |
 
 Good entries include:
 
@@ -790,10 +792,10 @@ Leave the repository navigable and resumable from files alone.
 ### Priority
 
 ```markdown
-![Priority](https://img.shields.io/badge/priority-low-6e7781)
 ![Priority](https://img.shields.io/badge/priority-medium-d29922)
-![Priority](https://img.shields.io/badge/priority-high-f85149)
-![Priority](https://img.shields.io/badge/priority-critical-da3633)
+![Priority](https://img.shields.io/badge/priority-medium-d29922)
+![Priority](https://img.shields.io/badge/priority-medium-d29922)
+![Priority](https://img.shields.io/badge/priority-medium-d29922)
 ```
 
 ### Blocked

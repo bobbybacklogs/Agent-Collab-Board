@@ -45,12 +45,29 @@
     Blocked: '#da3633', Review: '#8250df', Done: '#238636',
   };
   const STORE_KEY = 'uib.cols.v1';
+  const EDIT_KEY = 'uib.editing.v1';
 
   let data = null;
   let currentSlug = null;
   let currentTask = null;
   let draftCol = null;
   let stateBySlug = {};
+  let editing = false;
+
+  function editingSlotKey() {
+    return { slug: currentSlug, task: currentTask ? currentTask.id : null };
+  }
+
+  function saveEditing(mode) {
+    try {
+      const key = editingSlotKey();
+      localStorage.setItem(EDIT_KEY, JSON.stringify({ mode, key, ts: Date.now() }));
+    } catch (err) { /* ignore */ }
+  }
+
+  function clearEditing() {
+    try { localStorage.removeItem(EDIT_KEY); } catch (err) { /* ignore */ }
+  }
 
   // ---------- column config ----------
 
@@ -606,6 +623,7 @@
           <h2>${esc(p.title || p.slug)}</h2>
           <div class="sub">projects/${esc(slug)}.md · ${esc(pr.slug)}</div>
         </div>
+        <button class="editbtn" data-edit-project="${esc(slug)}">✎ Edit</button>
       </div>
       ${badges ? `<div class="badges">${badges}</div>` : ''}
       ${metaGrid(p.overview || {})}
@@ -624,6 +642,192 @@
 
     els.drawerBody.innerHTML = html;
     els.drawerOverlay.classList.add('open');
+  }
+
+  // ---------- editor (project drawer) ----------
+
+  async function postWrite(file, ops) {
+    const resp = await fetch('/api/write', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file, ops }),
+    });
+    let body;
+    try { body = await resp.json(); } catch (err) { body = {}; }
+    if (!resp.ok || !body.ok) {
+      throw new Error(body.error || `write failed (HTTP ${resp.status})`);
+    }
+  }
+
+  function editorHead(title, sub) {
+    return `<div class="detail-head"><div><h2>${esc(title)}</h2><div class="sub">${esc(sub)}</div></div></div>`;
+  }
+
+  function editorChecks(id, items) {
+    const rows = (items || []).map((it, i) => `
+      <label class="crit" data-i="${i}">
+        <input type="checkbox" data-idx="${i}" ${it.done ? 'checked' : ''}>
+        <span class="txt">${esc(it.text)}</span>
+      </label>`).join('');
+    return `<div class="field"><label>${esc(id)}</label><div class="crits" id="pe-criteria">${rows || '<div class="body-text">None</div>'}</div></div>`;
+  }
+
+  function renderProjectEditor() {
+    const pr = projectDetail(currentSlug);
+    const p = pr && pr.project;
+    const card = boardCard(currentSlug);
+    if (!p) return;
+    const status = (p.overview && p.overview['Status']) || (card && findBadge(card.badges, 'status') && findBadge(card.badges, 'status').value) || '';
+    const priority = (p.overview && p.overview.Priority) || (card && findBadge(card.badges, 'priority') && findBadge(card.badges, 'priority').value) || '';
+    const progress = (p.overview && p.overview.Progress) || (card && findBadge(card.badges, 'progress') && findBadge(card.badges, 'progress').value) || '';
+    const cur = p.current || {};
+
+    els.drawerBody.innerHTML = `
+      ${editorHead('Edit project', `projects/${currentSlug}.md`)}
+      <div class="edit-form" data-edit="project">
+        ${fieldField('Status', { choices: BOARD_STATES, current: status }, 'pe-status')}
+        ${fieldField('Priority', { choices: PRIO_VALUES, current: priority }, 'pe-priority')}
+        <div class="field"><label>Progress</label>
+          <select id="pe-progress">
+            ${[0,10,20,30,40,50,60,70,80,90,100].map((n) => {
+              const label = `${n}%`;
+              return `<option value="${esc(label)}" ${normalizeProgress(progress) === label ? 'selected' : ''}>${esc(label)}</option>`;
+            }).join('')}
+          </select>
+        </div>
+        <div class="field"><label>Objective</label>
+          <textarea id="pe-objective" rows="3">${esc(p.objective || '')}</textarea>
+        </div>
+        <div class="field"><label>Current Focus</label>
+          <textarea id="pe-focus" rows="2">${esc(cur.focus || '')}</textarea>
+        </div>
+        <div class="field"><label>Next Milestone</label>
+          <textarea id="pe-milestone" rows="2">${esc(cur.nextMilestone || '')}</textarea>
+        </div>
+        <div class="field"><label>Next Action</label>
+          <textarea id="pe-next" rows="2">${esc(cur.nextAction || '')}</textarea>
+        </div>
+        ${editorChecks('Success Criteria', p.successCriteria)}
+        <div class="form-actions">
+          <button class="plain" id="pe-cancel">Cancel</button>
+          <button class="apply" id="pe-save">Save changes</button>
+        </div>
+      </div>`;
+    els.drawerOverlay.classList.add('open');
+  }
+
+  function normalizeProgress(v) {
+    const n = parseInt(String(v || '').replace(/[^0-9]/g, ''), 10);
+    return Number.isNaN(n) ? '' : `${n}%`;
+  }
+
+  function fieldField(label, value, id) {
+    if (typeof value === 'object' && value.choices) {
+      return `<div class="field"><label>${esc(label)}</label>
+        <select id="${esc(id)}">${value.choices.map((v) => `<option value="${esc(v)}" ${v === value.current ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select></div>`;
+    }
+    return `<div class="field"><label>${esc(label)}</label><input type="text" id="${esc(id)}" value="${esc(value || '')}"></div>`;
+  }
+
+  function boardStateFor(slug) {
+    if (!data || !data.board || !data.board.sections) return '';
+    for (const sec of data.board.sections) {
+      for (const c of sec.projects || []) {
+        if (slugOfProjectRef(c.refs.project) === slug) return sec.state;
+      }
+    }
+    return '';
+  }
+
+  function readProjectEditor() {
+    return {
+      status: $('#pe-status').value,
+      priority: $('#pe-priority').value,
+      progress: $('#pe-progress').value,
+      objective: $('#pe-objective').value.trim(),
+      focus: $('#pe-focus').value.trim(),
+      milestone: $('#pe-milestone').value.trim(),
+      next: $('#pe-next').value.trim(),
+      criteria: Array.prototype.map.call($('#pe-criteria').querySelectorAll('input[type=checkbox]'), (i, idx) => {
+        const items = projectDetail(currentSlug).project.successCriteria;
+        return { idx, text: items[idx].text, done: i.checked };
+      }),
+    };
+  }
+
+  function statusOfCard(card) {
+    const b = findBadge(card && card.badges, 'status');
+    return (b && b.value) || '';
+  }
+
+  function priorityOfCard(card) {
+    const b = findBadge(card && card.badges, 'priority');
+    return (b && b.value) || '';
+  }
+
+  function progressOfCard(card) {
+    const b = findBadge(card && card.badges, 'progress');
+    return (b && b.value) || '';
+  }
+
+  function stateBadgeColor(s) {
+    const c = { Planning: '#6e7781', Ready: '#1f6feb', Active: '#238636', Blocked: '#da3633', Review: '#8250df', Paused: '#d29922', Complete: '#238636', Archived: '#6e7781' }[s] || '#6e7781';
+    return c.replace(/^#/, '');
+  }
+
+  function priorityBadgeColor(v) {
+    const c = { Low: '#8b949e', Medium: '#d29922', High: '#f85149', Critical: '#da3633' }[v] || '#8b949e';
+    return c.replace(/^#/, '');
+  }
+
+  async function saveProjectEditor() {
+    const slug = currentSlug;
+    const pr = projectDetail(slug);
+    const p = pr && pr.project;
+    const card = boardCard(slug);
+    if (!p || !card) { toast('Cannot edit: missing project data'); return; }
+    const f = readProjectEditor();
+    const cur = p.current || {};
+    const oldStatus = boardStateFor(slug);
+    const ops = [];
+    const bOps = [];
+
+    if (p.overview && 'Status' in p.overview) ops.push({ op: 'kv', key: 'Status', value: f.status });
+    if (p.overview && 'Priority' in p.overview) ops.push({ op: 'kv', key: 'Priority', value: f.priority });
+    if (p.overview && 'Progress' in p.overview) ops.push({ op: 'kv', key: 'Progress', value: f.progress });
+    if (p.objective !== f.objective) ops.push({ op: 'section', heading: 'Objective', value: f.objective });
+    if ((cur.focus || '') !== f.focus) ops.push({ op: 'label', label: 'Current Focus', value: f.focus });
+    if ((cur.nextMilestone || '') !== f.milestone) ops.push({ op: 'label', label: 'Next Milestone', value: f.milestone });
+    if ((cur.nextAction || '') !== f.next) ops.push({ op: 'label', label: 'Next Action', value: f.next });
+    for (const c of f.criteria) {
+      const item = p.successCriteria[c.idx];
+      if (item && item.done !== c.done) ops.push({ op: 'check', text: item.text, done: c.done });
+    }
+
+    // Sync priority + status/progress onto the board card.
+    if (statusOfCard(card) !== f.status) {
+      bOps.push({ op: 'projectState', title: card.name, state: f.status });
+      ops.push({ op: 'badge', label: 'status', value: f.status.toLowerCase(), color: stateBadgeColor(f.status) });
+    }
+    if (priorityOfCard(card) !== f.priority) {
+      bOps.push({ op: 'badge', label: 'priority', value: f.priority.toLowerCase(), color: priorityBadgeColor(f.priority) });
+      ops.push({ op: 'badge', label: 'priority', value: f.priority.toLowerCase(), color: priorityBadgeColor(f.priority) });
+    }
+    if (progressOfCard(card) !== f.progress) {
+      bOps.push({ op: 'badge', label: 'progress', value: f.progress.toLowerCase() });
+      ops.push({ op: 'badge', label: 'progress', value: f.progress.toLowerCase() });
+    }
+
+    try {
+      if (ops.length) await postWrite(`projects/${slug}.md`, ops);
+      if (bOps.length) await postWrite('BOARD.md', bOps);
+      toast('Project saved');
+      const st = await fetch('/api/state').then((r) => r.json());
+      if (st && st.generatedAt) apply(st);
+      if (isOpen(els.drawerOverlay)) openDrawer(slug);
+    } catch (err) {
+      toast(`Save failed: ${err.message}`);
+    }
   }
 
   // ---------- task modal ----------
@@ -652,7 +856,8 @@
     const badges = (t.badges || []).map(parseBadge).filter(Boolean).map(chip).join('');
 
     els.taskBody.innerHTML = `
-      <div class="detail-head"><div><h2>${esc(t.id)} · ${esc(t.title)}</h2></div></div>
+      <div class="detail-head"><div><h2>${esc(t.id)} · ${esc(t.title)}</h2></div>
+        <button class="editbtn" data-edit-task="${esc(t.id)}">✎ Edit</button></div></div>
       ${badges ? `<div class="badges">${badges}</div>` : ''}
       ${section('Fields', metaGrid(t.fields || {}))}
       ${section('Goal', t.goal ? `<p class="body-text">${esc(t.goal)}</p>` : '')}
@@ -664,6 +869,101 @@
       ${section('Resources', bulletList(t.resources))}
       ${section('Next Action', t.nextAction ? `<p class="body-text">${esc(t.nextAction)}</p>` : '')}`;
     els.taskOverlay.classList.add('open');
+  }
+
+  // ---------- task editor ----------
+
+  function findTaskWorkflow(slug, id) {
+    const pr = projectDetail(slug);
+    const tb = pr && pr.taskBoard;
+    if (!tb || !tb.workflows) return '';
+    for (const w of WORKFLOW_ORDER) {
+      if ((tb.workflows[w] || []).some((t) => t.id === id)) return w;
+    }
+    return '';
+  }
+
+  function renderTaskEditor() {
+    const t = findTask(currentSlug, currentTask.id);
+    if (!t) return;
+    const wf = findTaskWorkflow(currentSlug, currentTask.id);
+    const priority = (t.fields && t.fields.Priority) || (findBadge(t.badges, 'priority') && findBadge(t.badges, 'priority').value) || '';
+
+    const crit = itemsSummary(t.criteria);
+    const val = itemsSummary(t.validation);
+
+    els.taskBody.innerHTML = `
+      ${editorHead(`Edit task · ${esc(t.id)}`, `${esc(t.id)} · ${esc(t.title)}`)}
+      <div class="edit-form" data-edit="task">
+        <div class="field"><label>Workflow</label>
+          <select id="te-workflow">${WORKFLOW_ORDER.map((w) => `<option value="${esc(w)}" ${w === wf ? 'selected' : ''}>${esc(w)}</option>`).join('')}</select>
+        </div>
+        <div class="field"><label>Priority</label>
+          <select id="te-priority">${PRIO_VALUES.map((v) => `<option value="${esc(v)}" ${v === priority ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select>
+        </div>
+        <div class="field"><label>Goal</label>
+          <textarea id="te-goal" rows="3">${esc(t.goal || '')}</textarea>
+        </div>
+        <div class="field"><label>Next Action</label>
+          <textarea id="te-next" rows="2">${esc(t.nextAction || '')}</textarea>
+        </div>
+        <div class="field"><label>Acceptance Criteria</label><div class="crits" id="te-criteria">
+          ${(crit.items || []).map((it, i) => `<label class="crit"><input type="checkbox" data-idx="${i}" data-kind="criteria" ${it.done ? 'checked' : ''}><span class="txt">${esc(it.text)}</span></label>`).join('') || '<div class="body-text">None</div>'}
+        </div></div>
+        <div class="field"><label>Validation</label><div class="crits" id="te-validation">
+          ${(val.items || []).map((it, i) => `<label class="crit"><input type="checkbox" data-idx="${i}" data-kind="validation" ${it.done ? 'checked' : ''}><span class="txt">${esc(it.text)}</span></label>`).join('') || '<div class="body-text">None</div>'}
+        </div></div>
+        <div class="form-actions">
+          <button class="plain" id="te-cancel">Cancel</button>
+          <button class="apply" id="te-save">Save changes</button>
+        </div>
+      </div>`;
+    els.taskOverlay.classList.add('open');
+  }
+
+  async function saveTaskEditor() {
+    const slug = currentSlug;
+    const id = currentTask.id;
+    const t = findTask(slug, id);
+    if (!t) { toast('Cannot edit: task missing'); return; }
+    const wf = $('#te-workflow').value;
+    const priority = $('#te-priority').value;
+    const goal = $('#te-goal').value.trim();
+    const next = $('#te-next').value.trim();
+
+    const ops = [];
+    if (wf !== findTaskWorkflow(slug, id)) ops.push({ op: 'task', taskId: id, workflow: wf });
+    if (t.fields && 'Priority' in t.fields) ops.push({ op: 'taskKV', taskId: id, key: 'Priority', value: priority });
+    if (findBadge(t.badges, 'priority') && priorityOfBadges(t.badges) !== priority) ops.push({ op: 'taskBadge', taskId: id, label: 'priority', value: priority.toLowerCase(), color: priorityBadgeColor(priority) });
+    if ((t.goal || '') !== goal) ops.push({ op: 'taskLabel', taskId: id, label: 'Goal', value: goal });
+    if ((t.nextAction || '') !== next) ops.push({ op: 'taskLabel', taskId: id, label: 'Next Action', value: next });
+
+    // criteria + validation toggles
+    const kinds = ['criteria', 'validation'];
+    for (const kind of kinds) {
+      const items = kind === 'criteria' ? itemsSummary(t.criteria).items : itemsSummary(t.validation).items;
+      const boxes = document.querySelectorAll(kind === 'criteria' ? '#te-criteria input' : '#te-validation input');
+      items.forEach((it, i) => {
+        if (boxes[i] && it.done !== boxes[i].checked) {
+          ops.push({ op: 'taskCheck', taskId: id, text: it.text, done: boxes[i].checked });
+        }
+      });
+    }
+
+    try {
+      if (ops.length) await postWrite(`tasks/${slug}-tasks.md`, ops);
+      toast('Task saved');
+      const st = await fetch('/api/state').then((r) => r.json());
+      if (st && st.generatedAt) apply(st);
+      if (isOpen(els.taskOverlay)) openTask(slug, id);
+    } catch (err) {
+      toast(`Save failed: ${err.message}`);
+    }
+  }
+
+  function priorityOfBadges(badges) {
+    const b = findBadge(badges, 'priority');
+    return (b && b.value) || '';
   }
 
   // ---------- apply / refresh ----------
@@ -808,6 +1108,26 @@
   els.drawerBody.addEventListener('click', (e) => {
     const tc = e.target.closest('.tcard');
     if (tc && tc.dataset.task && currentSlug) openTask(currentSlug, tc.dataset.task);
+    const editBtn = e.target.closest('[data-edit-project]');
+    if (editBtn) {
+      currentSlug = editBtn.dataset.editProject;
+      saveEditing('project');
+      renderProjectEditor();
+      return;
+    }
+    if (e.target.closest('#pe-save')) { saveProjectEditor(); return; }
+    if (e.target.closest('#pe-cancel')) { openDrawer(currentSlug); return; }
+  });
+
+  els.taskBody.addEventListener('click', (e) => {
+    if (e.target.closest('[data-edit-task]')) {
+      const id = e.target.closest('[data-edit-task]').dataset.editTask;
+      currentTask = { slug: currentSlug, id };
+      renderTaskEditor();
+      return;
+    }
+    if (e.target.closest('#te-save')) { saveTaskEditor(); return; }
+    if (e.target.closest('#te-cancel')) { openTask(currentSlug, currentTask.id); return; }
   });
 
   els.drawerClose.addEventListener('click', () => els.drawerOverlay.classList.remove('open'));

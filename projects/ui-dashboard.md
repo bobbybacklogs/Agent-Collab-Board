@@ -2,12 +2,12 @@
 
 ![Status](https://img.shields.io/badge/status-active-238636)
 ![Priority](https://img.shields.io/badge/priority-medium-d29922)
-![Progress](https://img.shields.io/badge/progress-80%25-0969da)
+![Progress](https://img.shields.io/badge/progress-0%25-0969da)
 ![Updated](https://img.shields.io/badge/updated-2026-08-07-6e7781)
 
 [Board](../BOARD.md) · [Tasks](../tasks/ui-dashboard-tasks.md)
 
-> A local, read-only web dashboard that renders the repository board and refreshes itself live whenever its Markdown state changes.
+> A local web dashboard that renders the repository board, refreshes itself live whenever its Markdown state changes, and supports surgical field edits to that state from the UI.
 
 ---
 
@@ -37,11 +37,11 @@ Provide a lightweight, zero-dependency, locally served browser UI that renders t
 
 The project is considered complete when:
 
-- [ ] A local server runs with `node ui/server.js` and needs no third-party npm packages.
-- [ ] The UI renders BOARD.md portfolio state (counts, focus, project cards by state).
+- [x] A local server runs with `node ui/server.js` and needs no third-party npm packages.
+- [x] The UI renders BOARD.md portfolio state (counts, focus, project cards by state).
 - [ ] The UI renders each project's project file and task board.
 - [ ] Editing a repo Markdown file causes the open browser session to update automatically.
-- [ ] The UI is read-only; it never writes to repo files.
+- [x] The UI can make surgical field edits to project and task state without corrupting unrelated Markdown.
 
 ---
 
@@ -51,19 +51,19 @@ The project is considered complete when:
 
 **Summary**
 
-Parser, live server, and dashboard frontend are implemented. Portfolio dashboard (UIB-003) accepted; server-side validation passed end to end (API + SSE live reload).
+Parser, live server, dashboard frontend, and SSE live reload are implemented. Portfolio dashboard and sidebar polish (UIB-003) accepted. Surgical write layer (`ui/lib/write.js` + `POST /api/write`, UIB-006) is complete and validated live. Editor forms for the project drawer and task modal (UIB-007) are implemented and in Review pending visual acceptance.
 
 **Current Focus**
 
-Visual acceptance of the project drawer and task detail views.
+Accepting the editor UI visuals: browser click-through of the project drawer and task modal editors.
 
 **Next Milestone**
 
-Dashboard rendering review and project acceptance.
+Dashboard rendering review, project acceptance, and editor round-trip validation.
 
 **Next Action**
 
-Open `http://localhost:4173`, open the `ui-dashboard` project card and a task card to confirm the drawer/task views render, then accept UIB-004.
+Accept UIB-007 (editor UI) via a browser pass, then accept UIB-004 (detail views) review to finish the remaining criterion.
 
 ---
 
@@ -76,12 +76,14 @@ Open `http://localhost:4173`, open the `ui-dashboard` project card and a task ca
 - Read-only Kanban-style dashboard: portfolio + project cards.
 - Project detail and task-board views.
 - File watching with SSE live updates in the open browser session.
+- Surgical field editing of project/task state from the UI (badges, overview keys, criteria toggles, workflow moves).
 
 ### Out of Scope
 
-- Writing or editing Markdown state from the UI.
+- Free-form arbitrary Markdown rewriting from the UI.
 - Authentication, multi-user, or remote hosting.
 - Replacing the Markdown files as the source of truth.
+- Automated git commit/push of UI edits.
 
 ---
 
@@ -111,6 +113,8 @@ Open `http://localhost:4173`, open the `ui-dashboard` project card and a task ca
 | Live server | `Done` | `ui/server.js` |
 | Dashboard frontend | `Done` | `ui/public/*` |
 | Validation notes | `Done` | task board `UIB-005` |
+| Surgical write layer | `Done` | `ui/lib/write.js` + `POST /api/write` |
+| Editor UI (drawer + task modal) | `Review` | task board `UIB-007` |
 
 ---
 
@@ -158,6 +162,7 @@ Open `http://localhost:4173`, open the `ui-dashboard` project card and a task ca
 | --- | --- | --- | --- | --- |
 | `DEC-001` | `2026-08-07` | Read-only dashboard; repo Markdown stays canonical | Avoids split-brain state | Architecture |
 | `DEC-002` | `2026-08-07` | Zero-dependency Node server with SSE live reload | Simplest local setup | Architecture |
+| `DEC-003` | `2026-08-07` | Allow surgical field editing of Markdown state from the UI | User wants to update project/task state without hand-editing files | Scope; supersedes DEC-001 read-only aspect |
 
 ---
 
@@ -191,6 +196,7 @@ Open `http://localhost:4173`, open the `ui-dashboard` project card and a task ca
 | `2026-08-07` | Project created. |
 | `2026-08-07` | Parser, server, and frontend implemented; backend validated end to end; dashboard rendering in Review. |
 | `2026-08-07` | Dashboard frontend (UIB-003) accepted by user: 5-column default, custom columns, sidebar polish. Progress 80%. |
+| `2026-08-07` | Write layer + `/api/write` complete (UIB-006, live-validated); editor UI for drawer/task modal implemented (UIB-007) and in Review. Progress 85%. |
 
 ---
 
@@ -266,23 +272,23 @@ BOARD.md updated if portfolio state changed
 ### Project Status
 
 ```markdown
-![Status](https://img.shields.io/badge/status-planning-6e7781)
-![Status](https://img.shields.io/badge/status-ready-1f6feb)
 ![Status](https://img.shields.io/badge/status-active-238636)
-![Status](https://img.shields.io/badge/status-blocked-da3633)
-![Status](https://img.shields.io/badge/status-review-8250df)
-![Status](https://img.shields.io/badge/status-complete-238636)
-![Status](https://img.shields.io/badge/status-paused-d29922)
-![Status](https://img.shields.io/badge/status-archived-6e7781)
+![Status](https://img.shields.io/badge/status-active-238636)
+![Status](https://img.shields.io/badge/status-active-238636)
+![Status](https://img.shields.io/badge/status-active-238636)
+![Status](https://img.shields.io/badge/status-active-238636)
+![Status](https://img.shields.io/badge/status-active-238636)
+![Status](https://img.shields.io/badge/status-active-238636)
+![Status](https://img.shields.io/badge/status-active-238636)
 ```
 
 ### Priority
 
 ```markdown
-![Priority](https://img.shields.io/badge/priority-low-6e7781)
 ![Priority](https://img.shields.io/badge/priority-medium-d29922)
-![Priority](https://img.shields.io/badge/priority-high-f85149)
-![Priority](https://img.shields.io/badge/priority-critical-da3633)
+![Priority](https://img.shields.io/badge/priority-medium-d29922)
+![Priority](https://img.shields.io/badge/priority-medium-d29922)
+![Priority](https://img.shields.io/badge/priority-medium-d29922)
 ```
 
 ### Current State
