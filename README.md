@@ -103,7 +103,7 @@ README.md
 ├── AGENTS.md
 ├── BOARD.md
 ├── CLAUDE.md
-├── GEMINI.md
+├── GEMNI.md
 │
 ├── docs/
 │   ├── README.md
@@ -117,12 +117,17 @@ README.md
 │   ├── _TEMPLATE.md
 │   └── <project-slug>.md
 │
-└── tasks/
-    ├── README.md
-    ├── AGENTS.md
-    ├── INSTRUCTIONS.md
-    ├── _TEMPLATE.md
-    └── <project-slug>-tasks.md
+├── tasks/
+│   ├── README.md
+│   ├── AGENTS.md
+│   ├── INSTRUCTIONS.md
+│   ├── _TEMPLATE.md
+│   └── <project-slug>-tasks.md
+│
+├── ui/            → local dashboard (server + frontend)
+├── sdk/           → agent-board SDK (read/apply/validate/watch)
+├── skills/        → agent skills bundle (board-state, board-edit, ...)
+└── platform/      → install shims for Cursor, Codex, VS Code
 ```
 
 ---
@@ -133,7 +138,7 @@ The same repository can be viewed as a local dashboard in a browser.
 
 It renders the board as columns, opens project cards and their task boards, and refreshes on its own whenever the Markdown changes.
 
-The dashboard is read-only. It never edits the files the board reads from — the repository remains the source of truth.
+The dashboard reads and writes through the shared `agent-board` SDK (`sdk/`); the Markdown files remain the source of truth.
 
 Run it with a single command from the `ui/` directory:
 
@@ -142,6 +147,20 @@ node server.js
 ```
 
 Then open the printed local address. Keep `BOARD.md`, `projects/`, and `tasks/` in mind: editing any of them updates the open page automatically.
+
+---
+
+## SDK
+
+The board's programmatic interface is the zero-dependency `agent-board` package in [`sdk/`](./sdk/):
+
+```js
+const { createBoard } = require('agent-board');
+const board = createBoard(repo);
+board.read(); board.apply(target, ops); board.validate(target, ops); board.watch(cb); board.ops();
+```
+
+The dashboard server and the agent CLI both run on it. See [`sdk/README.md`](./sdk/README.md).
 
 ---
 
@@ -509,7 +528,7 @@ Additional lightweight compatibility files may exist for tools with their own au
 
 ```text
 CLAUDE.md
-GEMINI.md
+GEMNI.md
 ```
 
 These should point agents back toward the canonical repository system rather than maintain separate project-management policies.
