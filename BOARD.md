@@ -1,12 +1,12 @@
 # Project Board
 
 ![Board](https://img.shields.io/badge/board-portfolio-0969da)
-![Projects](https://img.shields.io/badge/projects-1-0969da)
-![Active](https://img.shields.io/badge/active-1-238636)
+![Projects](https://img.shields.io/badge/projects-3-0969da)
+![Active](https://img.shields.io/badge/active-0-238636)
 ![Blocked](https://img.shields.io/badge/blocked-0-da3633)
-![Review](https://img.shields.io/badge/review-0-8250df)
-![Complete](https://img.shields.io/badge/complete-0-238636)
-![Updated](https://img.shields.io/badge/updated-2026--08--07-6e7781)
+![Review](https://img.shields.io/badge/review-1-8250df)
+![Complete](https://img.shields.io/badge/complete-2-238636)
+![Updated](https://img.shields.io/badge/updated-2026--08--12-6e7781)
 
 > Repository-wide project overview and coordination board.
 > Detailed project state lives in `/projects`. Detailed task execution lives in `/tasks`.
@@ -18,39 +18,39 @@
 | Field | Value |
 | --- | --- |
 | **Board Status** | `Active` |
-| **Total Projects** | `1` |
-| **Active Projects** | `1` |
+| **Total Projects** | `3` |
+| **Active Projects** | `0` |
 | **Blocked Projects** | `0` |
-| **Projects in Review** | `0` |
-| **Completed Projects** | `0` |
-| **Current Focus** | `Dashboard Board UI` |
-| **Last Updated** | `2026-08-07` |
+| **Projects in Review** | `1` |
+| **Completed Projects** | `2` |
+| **Current Focus** | `Board SDK` |
+| **Last Updated** | `2026-08-12` |
 
 ---
 
 ## Current Focus
 
-![Focus](https://img.shields.io/badge/focus-dashboard%20board%20ui-238636)
+![Focus](https://img.shields.io/badge/focus-board%20sdk-238636)
 
 **Primary Project**
 
-`Dashboard Board UI`
+`Board SDK`
 
 **Current Objective**
 
-`Provide a local, zero-dependency dashboard for the Markdown board that live-updates on repo changes and supports surgical field edits from the UI.`
+`A publishable, zero-dependency Node SDK that wraps the board's read layer, surgical write layer, and file watching behind a single createBoard(repo) API.`
 
 **Active Task**
 
-`UIB-007 — Editor UI (review)`
+None — all BSD tasks Done (BSD-001..008).
 
 **Next Action**
 
-`Accept the editor UI (UIB-007) in a browser pass, then accept UIB-004 detail-view review; the write layer (UIB-006) is done and live-validated.`
+User review of the SDK delivery; on approval, publish `agent-board` (user step with OTP).
 
 **Why This Is Current**
 
-`The user requested the dashboard; it is the only active project and is in active development.`
+`The user's idea 2: turn the board toolkit into a working SDK. Board SDK (BSD) implemented, validated end to end (npm test 48/48 + consumer smoke 12/12), and in Review awaiting user acceptance.`
 
 ---
 
@@ -76,7 +76,7 @@ _No projects currently in planning._
 
 > Projects sufficiently defined and ready for execution.
 
-_No projects currently ready._
+_No projects currently in ready._
 
 ---
 
@@ -86,11 +86,76 @@ _No projects currently ready._
 
 > Projects currently receiving active execution.
 
+# Blocked
+
+![Blocked](https://img.shields.io/badge/status-blocked-da3633)
+
+> Projects whose overall progress is materially prevented by a dependency or unresolved issue.
+
+_No blocked projects._
+
+---
+
+# Review
+
+![Review](https://img.shields.io/badge/status-review-8250df)
+
+> Projects whose primary execution is complete and are undergoing final validation or acceptance.
+
+### Board SDK
+
+![Status](https://img.shields.io/badge/status-review-8250df)
+![Priority](https://img.shields.io/badge/priority-high-f85149)
+![Progress](https://img.shields.io/badge/progress-100%25-238636)
+![Blocked](https://img.shields.io/badge/blocked-no-238636)
+
+**Project:** [`projects/board-sdk.md`](projects/board-sdk.md)  
+**Tasks:** [`tasks/board-sdk-tasks.md`](tasks/board-sdk-tasks.md)
+
+| Field | Value |
+| --- | --- |
+| **Project ID** | `BSD` |
+| **Status** | `Review` |
+| **Priority** | `High` |
+| **Progress** | `100%` |
+| **Current Task** | `None` |
+| **Next Task** | `None — awaiting user acceptance` |
+| **Target** | `2026-08-12` |
+| **Updated** | `2026-08-12` |
+
+**Objective**
+
+A publishable, zero-dependency Node SDK exposing `createBoard(repo)` with read, apply, validate, watch, and ops — the programmatic interface that the dashboard server and agent CLI both consume.
+
+**Current State**
+
+Implemented end to end; validated on a scratch repo (E2E 18/18, server + CLI smoke, `npm pack --dry-run` clean) and a repeatable test harness now covers the full API/CLI surface (`npm test` 48/48) plus a packed-tarball consumer smoke test (12/12 against a real-repo copy). In Review awaiting user acceptance.
+
+**Next Action**
+
+User review; on approval publish `agent-board` (user step with OTP).
+
+# Paused
+
+![Paused](https://img.shields.io/badge/status-paused-d29922)
+
+> Projects intentionally suspended while remaining relevant.
+
+_No paused projects._
+
+---
+
+# Complete
+
+![Complete](https://img.shields.io/badge/status-complete-238636)
+
+> Projects whose project-level success criteria are satisfied.
+
 ### Local Board Dashboard
 
-![Status](https://img.shields.io/badge/status-active-238636)
+![Status](https://img.shields.io/badge/status-complete-238636)
 ![Priority](https://img.shields.io/badge/priority-medium-d29922)
-![Progress](https://img.shields.io/badge/progress-0%25-0969da)
+![Progress](https://img.shields.io/badge/progress-100%25-0969da)
 ![Blocked](https://img.shields.io/badge/blocked-no-238636)
 
 **Project:** [`projects/ui-dashboard.md`](projects/ui-dashboard.md)  
@@ -99,7 +164,7 @@ _No projects currently ready._
 | Field | Value |
 | --- | --- |
 | **Project ID** | `UIB` |
-| **Status** | `Active` |
+| **Status** | `Complete` |
 | **Priority** | `Medium` |
 | **Progress** | `85%` |
 | **Current Task** | `UIB-007 editor UI (validation)` |
@@ -121,43 +186,42 @@ Accept the editor UI (UIB-007) in a browser pass, then accept UIB-004 detail-vie
 
 ---
 
-# Blocked
 
-![Blocked](https://img.shields.io/badge/status-blocked-da3633)
+### Board Agent Toolkit
 
-> Projects whose overall progress is materially prevented by a dependency or unresolved issue.
+![Status](https://img.shields.io/badge/status-complete-238636)
+![Priority](https://img.shields.io/badge/priority-high-f85149)
+![Progress](https://img.shields.io/badge/progress-100%25-0969da)
+![Blocked](https://img.shields.io/badge/blocked-no-238636)
 
-_No blocked projects._
+**Project:** [`projects/board-agent-toolkit.md`](projects/board-agent-toolkit.md)  
+**Tasks:** [`tasks/board-agent-toolkit-tasks.md`](tasks/board-agent-toolkit-tasks.md)
+
+| Field | Value |
+| --- | --- |
+| **Project ID** | `BAT` |
+| **Status** | `Complete` |
+| **Priority** | `High` |
+| **Progress** | `100%` |
+| **Current Task** | `None` |
+| **Next Task** | `None` |
+| **Target** | `2026-08-12` |
+| **Updated** | `2026-08-12` |
+
+**Objective**
+
+Package the board's Markdown state system as a portable agent toolkit: a CLI over the surgical write layer and a shared skills bundle for Cursor, Codex, and VS Code Copilot.
+
+**Current State**
+
+Delivery complete (CLI, skills bundle, platform shims); validated end to end on a scratch repo. User approved on 2026-08-12.
+
+**Next Action**
+
+None — project Complete.
+
 
 ---
-
-# Review
-
-![Review](https://img.shields.io/badge/status-review-8250df)
-
-> Projects whose primary execution is complete and are undergoing final validation or acceptance.
-
-_No projects currently in review._
-
----
-
-# Paused
-
-![Paused](https://img.shields.io/badge/status-paused-d29922)
-
-> Projects intentionally suspended while remaining relevant.
-
-_No paused projects._
-
----
-
-# Complete
-
-![Complete](https://img.shields.io/badge/status-complete-238636)
-
-> Projects whose project-level success criteria are satisfied.
-
-_No completed projects._
 
 ---
 
@@ -179,7 +243,7 @@ _No archived projects._
 
 ![Status](https://img.shields.io/badge/status-active-238636)
 ![Priority](https://img.shields.io/badge/priority-medium-d29922)
-![Progress](https://img.shields.io/badge/progress-0%25-0969da)
+![Progress](https://img.shields.io/badge/progress-100%25-0969da)
 ![Blocked](https://img.shields.io/badge/blocked-no-238636)
 
 **Project:** [`projects/<PROJECT_SLUG>.md`](projects/<PROJECT_SLUG>.md)  
@@ -191,8 +255,8 @@ _No archived projects._
 | **Status** | `Active` |
 | **Priority** | `Medium` |
 | **Progress** | `0%` |
-| **Current Task** | `<TASK_ID_OR_NONE>` |
-| **Next Task** | `<TASK_ID_OR_NONE>` |
+| **Current Task** | `None` |
+| **Next Task** | `None` |
 | **Target** | `YYYY-MM-DD` |
 | **Updated** | `YYYY-MM-DD` |
 

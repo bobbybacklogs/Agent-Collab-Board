@@ -115,7 +115,14 @@ function applyKV(text, key, value) {
 function applyLabelBlock(text, label, value) {
   const L = clean(label);
   const lines = String(text).split('\n');
-  const idx = lines.findIndex((l) => l.trim() === `**${L}**`);
+  // Prefer an exact bold-label block (`**Label**`), then fall back to a
+  // level-1..3 heading (`# Label` / `## Label` / `### Label`) so the same op
+  // works for task-board blocks (e.g. `### Task Activity`, `### Next Action`).
+  let idx = lines.findIndex((l) => l.trim() === `**${L}**`);
+  if (idx < 0) {
+    const re = new RegExp(`^#{1,3}\\s+${esc(L)}\\s*$`);
+    idx = lines.findIndex((l) => re.test(l.trim()));
+  }
   if (idx < 0) throw new Error(`label "**${L}**" not found`);
   let end = idx + 1;
   while (end < lines.length) {
@@ -140,11 +147,12 @@ function applyCheck(text, itemText, done) {
   const out = String(text)
     .split('\n')
     .map((line) => {
-      const m = line.match(/^(\s*[-*]\s+)\[([ xX])\]\s*(\S.*)$/);
+      // (\r?)$ keeps CRLF line endings intact after the toggle.
+      const m = line.match(/^(\s*[-*]\s+)\[([ xX])\]\s*(\S[^\r]*)(\r?)$/);
       if (!m) return line;
       if (clean(m[3]) !== needle) return line;
       hit = true;
-      return `${m[1]}[${done ? 'x' : ' '}] ${m[3]}`;
+      return `${m[1]}[${done ? 'x' : ' '}] ${m[3]}${m[4]}`;
     });
   if (!hit) throw new Error(`checklist item "${itemText}" not found`);
   return out.join('\n');

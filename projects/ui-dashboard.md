@@ -1,8 +1,8 @@
 # Local Board Dashboard
 
-![Status](https://img.shields.io/badge/status-active-238636)
+![Status](https://img.shields.io/badge/status-complete-238636)
 ![Priority](https://img.shields.io/badge/priority-medium-d29922)
-![Progress](https://img.shields.io/badge/progress-0%25-0969da)
+![Progress](https://img.shields.io/badge/progress-100%25-0969da)
 ![Updated](https://img.shields.io/badge/updated-2026-08-07-6e7781)
 
 [Board](../BOARD.md) · [Tasks](../tasks/ui-dashboard-tasks.md)
@@ -17,7 +17,7 @@
 | --- | --- |
 | **Project ID** | `UIB` |
 | **Project Name** | Dashboard Board UI |
-| **Status** | `Active` |
+| **Status** | `Complete` |
 | **Priority** | `Medium` |
 | **Owner** | `Agent` |
 | **Started** | `2026-08-07` |
@@ -39,8 +39,8 @@ The project is considered complete when:
 
 - [x] A local server runs with `node ui/server.js` and needs no third-party npm packages.
 - [x] The UI renders BOARD.md portfolio state (counts, focus, project cards by state).
-- [ ] The UI renders each project's project file and task board.
-- [ ] Editing a repo Markdown file causes the open browser session to update automatically.
+- [x] The UI renders each project's project file and task board.
+- [x] Editing a repo Markdown file causes the open browser session to update automatically.
 - [x] The UI can make surgical field edits to project and task state without corrupting unrelated Markdown.
 
 ---
@@ -272,14 +272,14 @@ BOARD.md updated if portfolio state changed
 ### Project Status
 
 ```markdown
-![Status](https://img.shields.io/badge/status-active-238636)
-![Status](https://img.shields.io/badge/status-active-238636)
-![Status](https://img.shields.io/badge/status-active-238636)
-![Status](https://img.shields.io/badge/status-active-238636)
-![Status](https://img.shields.io/badge/status-active-238636)
-![Status](https://img.shields.io/badge/status-active-238636)
-![Status](https://img.shields.io/badge/status-active-238636)
-![Status](https://img.shields.io/badge/status-active-238636)
+![Status](https://img.shields.io/badge/status-complete-238636)
+![Status](https://img.shields.io/badge/status-complete-238636)
+![Status](https://img.shields.io/badge/status-complete-238636)
+![Status](https://img.shields.io/badge/status-complete-238636)
+![Status](https://img.shields.io/badge/status-complete-238636)
+![Status](https://img.shields.io/badge/status-complete-238636)
+![Status](https://img.shields.io/badge/status-complete-238636)
+![Status](https://img.shields.io/badge/status-complete-238636)
 ```
 
 ### Priority
