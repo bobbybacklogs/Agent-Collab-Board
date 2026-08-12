@@ -1,5 +1,7 @@
 # Agent Collab Project Board
 
+![Agent-Collab Board](./repo-assets/banner.png)
+
 ![Format](https://img.shields.io/badge/format-Markdown-000000)
 ![Platform](https://img.shields.io/badge/platform-GitHub-181717)
 ![Workflow](https://img.shields.io/badge/workflow-Kanban-0969da)
