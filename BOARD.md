@@ -1,12 +1,12 @@
 # Project Board
 
 ![Board](https://img.shields.io/badge/board-portfolio-0969da)
-![Projects](https://img.shields.io/badge/projects-3-0969da)
-![Active](https://img.shields.io/badge/active-0-238636)
+![Projects](https://img.shields.io/badge/projects-4-0969da)
+![Active](https://img.shields.io/badge/active-1-238636)
 ![Blocked](https://img.shields.io/badge/blocked-0-da3633)
 ![Review](https://img.shields.io/badge/review-1-8250df)
 ![Complete](https://img.shields.io/badge/complete-2-238636)
-![Updated](https://img.shields.io/badge/updated-2026--08--12-6e7781)
+![Updated](https://img.shields.io/badge/updated-2026--09--15-6e7781)
 
 > Repository-wide project overview and coordination board.
 > Detailed project state lives in `/projects`. Detailed task execution lives in `/tasks`.
@@ -18,39 +18,39 @@
 | Field | Value |
 | --- | --- |
 | **Board Status** | `Active` |
-| **Total Projects** | `3` |
-| **Active Projects** | `0` |
+| **Total Projects** | `4` |
+| **Active Projects** | `1` |
 | **Blocked Projects** | `0` |
 | **Projects in Review** | `1` |
 | **Completed Projects** | `2` |
-| **Current Focus** | `Board SDK` |
-| **Last Updated** | `2026-08-12` |
+| **Current Focus** | `Notion-like Agent Dashboard` |
+| **Last Updated** | `2026-09-15` |
 
 ---
 
 ## Current Focus
 
-![Focus](https://img.shields.io/badge/focus-board%20sdk-238636)
+![Focus](https://img.shields.io/badge/focus-notion%20dashboard-238636)
 
 **Primary Project**
 
-`Board SDK`
+`Notion-like Agent Dashboard`
 
 **Current Objective**
 
-`A publishable, zero-dependency Node SDK that wraps the board's read layer, surgical write layer, and file watching behind a single createBoard(repo) API.`
+`A real Notion-like workspace over the Markdown board — sidebar pages, kanban, drag-and-drop writes — replacing the gutted v0 PR #1 reskin.`
 
 **Active Task**
 
-None — all BSD tasks Done (BSD-001..008).
+NTN-004 browser verification of workspace flows.
 
 **Next Action**
 
-User review of the SDK delivery; on approval, publish `agent-board` (user step with OTP).
+Finish the browser pass on `node ui/server.js`, then move NTN tasks through Review.
 
 **Why This Is Current**
 
-`The user's idea 2: turn the board toolkit into a working SDK. Board SDK (BSD) implemented, validated end to end (npm test 48/48 + consumer smoke 12/12), and in Review awaiting user acceptance.`
+`PR #1 (v0) deleted the dashboard stylesheet and did not ship a usable kanban. This project rebuilds the UI the original request asked for, on the existing SDK write path.`
 
 ---
 
@@ -85,6 +85,39 @@ _No projects currently in ready._
 ![Active](https://img.shields.io/badge/status-active-238636)
 
 > Projects currently receiving active execution.
+
+### Notion-like Agent Dashboard
+
+![Status](https://img.shields.io/badge/status-active-238636)
+![Priority](https://img.shields.io/badge/priority-high-f85149)
+![Progress](https://img.shields.io/badge/progress-90%25-238636)
+![Blocked](https://img.shields.io/badge/blocked-no-238636)
+
+**Project:** [`projects/notion-dashboard.md`](projects/notion-dashboard.md)  
+**Tasks:** [`tasks/notion-dashboard-tasks.md`](tasks/notion-dashboard-tasks.md)
+
+| Field | Value |
+| --- | --- |
+| **Project ID** | `NTN` |
+| **Status** | `Active` |
+| **Priority** | `High` |
+| **Progress** | `90%` |
+| **Current Task** | `NTN-004` |
+| **Next Task** | `Browser verification, then Review` |
+| **Target** | `2026-09-15` |
+| **Updated** | `2026-09-15` |
+
+**Objective**
+
+A Notion-like workspace dashboard for agents and humans over the Markdown board: sidebar pages, portfolio kanban, nested task boards, and drag-and-drop surgical writes.
+
+**Current State**
+
+UI rewrite implemented (`ui/public/*`). Browser verification in progress. v0 PR #1 is not merged.
+
+**Next Action**
+
+Complete NTN-004 browser verification.
 
 # Blocked
 
@@ -366,6 +399,7 @@ Task-level review remains in the task board.
 
 | Date | Change |
 | --- | --- |
+| `2026-09-15` | `Notion-like Agent Dashboard` added to Active after v0 PR #1 wrecked the intended kanban UI; portfolio focus moved from Board SDK. |
 | `2026-08-07` | Board created with initial template state. |
 | `2026-08-07` | `Local Dashboard UI` project added to Active with project card, project file, and task board; counts and focus updated. |
 | `2026-08-07` | UI editor scope authorized (DEC-003); UIB-006/UIB-007 added; focus moved to write layer + editor UI. |

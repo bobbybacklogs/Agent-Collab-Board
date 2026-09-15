@@ -2,7 +2,7 @@
   "name": "local-board-dashboard",
   "version": "0.1.0",
   "private": true,
-  "description": "Local read-only dashboard for the Agent Collab Board Markdown state, with live reload.",
+  "description": "Local Notion-like workspace dashboard for Agent Collab Board Markdown state, with live reload and surgical writes.",
   "type": "commonjs",
   "scripts": {
     "start": "node server.js"
