@@ -448,6 +448,31 @@ Read the applicable AGENTS.md instructions and canonical project/task state firs
 Validate the task before marking it Done.
 ```
 
+---
+
+## Hosting the Dashboard Publicly
+
+The dashboard can be hosted as a small Node service while the board repository is mounted into the runtime. It serves public read-only state and live updates; write operations are disabled unless an operator configures a secret token.
+
+Required runtime settings:
+
+```text
+BOARD_REPO=/workspace/Agent-Collab-Board
+BOARD_WRITE_TOKEN=<long-random-secret>
+PORT=4173
+HOST=0.0.0.0
+```
+
+Start the hosted service from the `ui/` directory:
+
+```text
+npm start
+```
+
+Use `Authorization: Bearer <BOARD_WRITE_TOKEN>` for agent writes to `POST /api/write`. The same token may be sent as `X-Board-Write-Token`. Never put the token in the public dashboard or browser code. The public endpoints are `GET /api/state`, `GET /events`, and `GET /api/health`.
+
+The mounted checkout must be writable by the service account and should have its normal Git remote configured. After an agent write, the SDK updates the Markdown files in place and the dashboard broadcasts the new state over SSE. Run the service behind the host's HTTPS proxy and restrict `CORS_ORIGIN` to the dashboard origin when browser clients outside the service need API access.
+
 The root and scoped instruction structure is:
 
 ```text

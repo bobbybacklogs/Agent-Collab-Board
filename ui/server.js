@@ -7,7 +7,9 @@ const { createBoard, resolveTarget } = require('../sdk');
 
 const REPO = path.resolve(process.env.BOARD_REPO || path.join(__dirname, '..'));
 const PORT = Number(process.env.PORT || 4173);
+const HOST = process.env.HOST || '0.0.0.0';
 const PUBLIC = path.join(__dirname, 'public');
+const WRITE_TOKEN = process.env.BOARD_WRITE_TOKEN || '';
 const board = createBoard(REPO);
 
 const MIME = {
@@ -68,6 +70,14 @@ function sendJson(res, status, obj) {
   send(res, status, JSON.stringify(obj), 'application/json; charset=utf-8');
 }
 
+function isAuthorized(req) {
+  if (!WRITE_TOKEN) return false;
+  const header = req.headers.authorization || '';
+  const bearer = header.startsWith('Bearer ') ? header.slice(7) : '';
+  const supplied = bearer || req.headers['x-board-write-token'] || '';
+  return supplied === WRITE_TOKEN;
+}
+
 function serveStatic(res, relPath) {
   const safePath = path.normalize(relPath).replace(/^([.][.][/\\])+/, '');
   const candidate = path.join(PUBLIC, safePath);
@@ -108,6 +118,12 @@ function readJsonBody(req, res, cb) {
 }
 
 function handleWrite(req, res) {
+  if (!isAuthorized(req)) {
+    return sendJson(res, WRITE_TOKEN ? 401 : 503, {
+      ok: false,
+      error: WRITE_TOKEN ? 'write authorization required' : 'writes are disabled until BOARD_WRITE_TOKEN is configured',
+    });
+  }
   readJsonBody(req, res, (err, body) => {
     if (err) return sendJson(res, 400, { ok: false, error: err.message });
     try {
@@ -127,6 +143,11 @@ function handleWrite(req, res) {
 }
 
 const server = http.createServer((req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Board-Write-Token');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  if (req.method === 'OPTIONS') return send(res, 204, '', 'text/plain');
+
   const u = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = decodeURIComponent(u.pathname);
 
@@ -189,8 +210,8 @@ server.on('error', (err) => {
   throw err;
 });
 
-server.listen(PORT, () => {
-  console.log(`\n  Local Board Dashboard`);
+server.listen(PORT, HOST, () => {
+  console.log(`\n  Board Dashboard`);
   console.log(`  Repo : ${REPO}`);
   console.log(`  UI   : http://localhost:${PORT}`);
   console.log(`  API  : http://localhost:${PORT}/api/state`);
