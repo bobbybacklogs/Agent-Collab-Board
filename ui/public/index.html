@@ -3,90 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Local Board Dashboard</title>
+  <title>Agent Collab</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="logo" aria-hidden="true">▦</span>
-      <div>
-        <h1>Local Board Dashboard</h1>
-        <p class="repo" id="repo">…</p>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <button class="workspace" id="workspaceBtn" type="button">
+        <span class="workspace-mark" aria-hidden="true">A</span>
+        <span class="workspace-meta">
+          <strong id="workspaceName">Agent Collab</strong>
+          <span id="repo" class="workspace-sub">…</span>
+        </span>
+      </button>
+
+      <button class="side-search" id="openSearch" type="button">
+        <span>Search</span>
+        <kbd>⌘K</kbd>
+      </button>
+
+      <nav class="side-nav" aria-label="Workspace">
+        <a class="side-link" data-route="board" href="#/board">
+          <span class="ico" aria-hidden="true">▦</span> Board
+        </a>
+        <a class="side-link" data-route="tasks" href="#/tasks">
+          <span class="ico" aria-hidden="true">☰</span> All tasks
+        </a>
+        <a class="side-link" data-route="activity" href="#/activity">
+          <span class="ico" aria-hidden="true">◷</span> Activity
+        </a>
+      </nav>
+
+      <div class="side-label">Projects</div>
+      <nav class="side-pages" id="sidePages" aria-label="Projects"></nav>
+
+      <div class="side-foot">
+        <span id="live" class="live off">
+          <span class="dot"></span>
+          <span id="liveText">connecting…</span>
+        </span>
+        <button id="themeBtn" class="ghost" type="button" title="Toggle theme">Aa</button>
       </div>
-    </div>
-    <div class="topbar-right">
-      <span id="live" class="live off" title="Live updates">
-        <span class="dot"></span>
-        <span id="liveText">connecting…</span>
-      </span>
-      <span id="updated" class="updated"></span>
-    </div>
-  </header>
-
-  <main class="layout">
-    <aside class="summary">
-      <section class="panel focus" id="focus-panel">
-        <h2>Current Focus</h2>
-        <div id="focus-body"></div>
-      </section>
-
-      <section class="panel counts" id="counts-panel">
-        <h2>Portfolio</h2>
-        <div id="counts-body" class="counts"></div>
-      </section>
-
-      <section class="panel" id="aux-panel">
-        <h2>Board Activity</h2>
-        <div id="aux-body"></div>
-      </section>
     </aside>
 
-    <section class="board-area">
-      <div class="board-toolbar">
-        <div class="bt-left">
-          <span class="bt-title">Board</span>
-          <div class="colbtn-wrap">
-            <button id="colsBtn" class="toolbtn">
-              <span class="eye-ico" aria-hidden="true">◉</span> Columns
-              <span id="colsCount" class="bt-count"></span>
-            </button>
-            <div id="colsPop" class="popover" hidden></div>
-          </div>
-          <button id="addColBtn" class="toolbtn primary">+ Custom column</button>
-        </div>
-        <div class="bt-right">
-          <span id="colsHint" class="bt-hint"></span>
-        </div>
-      </div>
-      <section class="board" id="board"
-        aria-label="Projects grouped by board state and custom columns"></section>
-    </section>
-  </main>
-
-  <div id="drawerOverlay" class="overlay">
-    <aside id="drawer" class="drawer" role="dialog" aria-label="Project detail">
-      <button id="drawerClose" class="close" aria-label="Close">✕</button>
-      <div id="drawerBody"></div>
-    </aside>
+    <div class="frame">
+      <header class="crumbbar">
+        <button id="sidebarToggle" class="ghost" type="button" aria-label="Toggle sidebar">☰</button>
+        <nav class="crumbs" id="crumbs"></nav>
+        <span id="updated" class="updated"></span>
+      </header>
+      <main class="canvas" id="page"></main>
+    </div>
   </div>
 
   <div id="taskOverlay" class="overlay">
-    <section id="taskModal" class="taskmodal" role="dialog" aria-label="Task detail">
-      <button id="taskClose" class="close" aria-label="Close">✕</button>
+    <section id="taskModal" class="peek" role="dialog" aria-label="Task">
+      <button id="taskClose" class="close" type="button" aria-label="Close">✕</button>
       <div id="taskBody"></div>
     </section>
   </div>
 
-  <div id="customOverlay" class="overlay">
-    <section id="customModal" class="taskmodal colform" role="dialog" aria-label="Custom column">
-      <button id="customClose" class="close" aria-label="Close">✕</button>
-      <div id="customBody"></div>
+  <div id="cmdOverlay" class="overlay">
+    <section class="cmdk" role="dialog" aria-label="Search">
+      <input id="cmdInput" type="search" placeholder="Search projects and tasks…" autocomplete="off" />
+      <div id="cmdResults" class="cmd-results"></div>
     </section>
   </div>
 
   <div id="toast" class="toast" hidden></div>
-
   <script src="/app.js"></script>
 </body>
 </html>
