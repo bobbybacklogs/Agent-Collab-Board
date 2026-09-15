@@ -2,9 +2,9 @@
 
 ![Board](https://img.shields.io/badge/board-portfolio-0969da)
 ![Projects](https://img.shields.io/badge/projects-4-0969da)
-![Active](https://img.shields.io/badge/active-1-238636)
+![Active](https://img.shields.io/badge/active-0-238636)
 ![Blocked](https://img.shields.io/badge/blocked-0-da3633)
-![Review](https://img.shields.io/badge/review-1-8250df)
+![Review](https://img.shields.io/badge/review-2-8250df)
 ![Complete](https://img.shields.io/badge/complete-2-238636)
 ![Updated](https://img.shields.io/badge/updated-2026--09--15-6e7781)
 
@@ -19,9 +19,9 @@
 | --- | --- |
 | **Board Status** | `Active` |
 | **Total Projects** | `4` |
-| **Active Projects** | `1` |
+| **Active Projects** | `0` |
 | **Blocked Projects** | `0` |
-| **Projects in Review** | `1` |
+| **Projects in Review** | `2` |
 | **Completed Projects** | `2` |
 | **Current Focus** | `Notion-like Agent Dashboard` |
 | **Last Updated** | `2026-09-15` |
@@ -42,11 +42,11 @@
 
 **Active Task**
 
-NTN-004 browser verification of workspace flows.
+None — NTN tasks Done; project in Review.
 
 **Next Action**
 
-Finish the browser pass on `node ui/server.js`, then move NTN tasks through Review.
+User review of the Notion-like dashboard (PR 2) and Board SDK publish decision.
 
 **Why This Is Current**
 
@@ -86,38 +86,7 @@ _No projects currently in ready._
 
 > Projects currently receiving active execution.
 
-### Notion-like Agent Dashboard
-
-![Status](https://img.shields.io/badge/status-active-238636)
-![Priority](https://img.shields.io/badge/priority-high-f85149)
-![Progress](https://img.shields.io/badge/progress-90%25-238636)
-![Blocked](https://img.shields.io/badge/blocked-no-238636)
-
-**Project:** [`projects/notion-dashboard.md`](projects/notion-dashboard.md)  
-**Tasks:** [`tasks/notion-dashboard-tasks.md`](tasks/notion-dashboard-tasks.md)
-
-| Field | Value |
-| --- | --- |
-| **Project ID** | `NTN` |
-| **Status** | `Active` |
-| **Priority** | `High` |
-| **Progress** | `90%` |
-| **Current Task** | `NTN-004` |
-| **Next Task** | `Browser verification, then Review` |
-| **Target** | `2026-09-15` |
-| **Updated** | `2026-09-15` |
-
-**Objective**
-
-A Notion-like workspace dashboard for agents and humans over the Markdown board: sidebar pages, portfolio kanban, nested task boards, and drag-and-drop surgical writes.
-
-**Current State**
-
-UI rewrite implemented (`ui/public/*`). Browser verification in progress. v0 PR #1 is not merged.
-
-**Next Action**
-
-Complete NTN-004 browser verification.
+_No projects currently in active._
 
 # Blocked
 
@@ -167,6 +136,39 @@ Implemented end to end; validated on a scratch repo (E2E 18/18, server + CLI smo
 **Next Action**
 
 User review; on approval publish `agent-board` (user step with OTP).
+
+### Notion-like Agent Dashboard
+
+![Status](https://img.shields.io/badge/status-review-8250df)
+![Priority](https://img.shields.io/badge/priority-high-f85149)
+![Progress](https://img.shields.io/badge/progress-100%25-238636)
+![Blocked](https://img.shields.io/badge/blocked-no-238636)
+
+**Project:** [`projects/notion-dashboard.md`](projects/notion-dashboard.md)  
+**Tasks:** [`tasks/notion-dashboard-tasks.md`](tasks/notion-dashboard-tasks.md)
+
+| Field | Value |
+| --- | --- |
+| **Project ID** | `NTN` |
+| **Status** | `Review` |
+| **Priority** | `High` |
+| **Progress** | `100%` |
+| **Current Task** | `None` |
+| **Next Task** | `User acceptance` |
+| **Target** | `2026-09-15` |
+| **Updated** | `2026-09-15` |
+
+**Objective**
+
+A Notion-like workspace dashboard for agents and humans over the Markdown board: sidebar pages, portfolio kanban, nested task boards, and drag-and-drop surgical writes.
+
+**Current State**
+
+UI rewrite implemented and browser-verified. In Review awaiting user acceptance. v0 PR #1 is not merged.
+
+**Next Action**
+
+User review of the dashboard in a browser.
 
 # Paused
 

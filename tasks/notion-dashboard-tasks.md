@@ -1,12 +1,12 @@
 # Notion-like Agent Dashboard — Tasks
 
-![Status](https://img.shields.io/badge/status-active-238636)
+![Status](https://img.shields.io/badge/status-review-8250df)
 ![Backlog](https://img.shields.io/badge/backlog-0-6e7781)
 ![Ready](https://img.shields.io/badge/ready-0-1f6feb)
-![In Progress](https://img.shields.io/badge/in%20progress-1-d29922)
+![In Progress](https://img.shields.io/badge/in%20progress-0-d29922)
 ![Blocked](https://img.shields.io/badge/blocked-0-da3633)
-![Review](https://img.shields.io/badge/review-3-8250df)
-![Done](https://img.shields.io/badge/done-0-238636)
+![Review](https://img.shields.io/badge/review-0-8250df)
+![Done](https://img.shields.io/badge/done-4-238636)
 ![Updated](https://img.shields.io/badge/updated-2026--09--15-6e7781)
 
 [Board](../BOARD.md) · [Project](../projects/notion-dashboard.md)
@@ -23,9 +23,9 @@
 | **Project ID** | `NTN` |
 | **Project File** | [`../projects/notion-dashboard.md`](../projects/notion-dashboard.md) |
 | **Task Prefix** | `NTN` |
-| **Board Status** | `Active` |
+| **Board Status** | `Review` |
 | **Last Updated** | `2026-09-15` |
-| **Active Task** | `NTN-004` |
+| **Active Task** | `None` |
 | **Next Ready Task** | `None` |
 
 ---
@@ -50,6 +50,8 @@ _No tasks currently in backlog._
 
 ![Ready](https://img.shields.io/badge/status-ready-1f6feb)
 
+> Tasks that are sufficiently defined and can be started.
+
 _No tasks currently ready._
 
 ---
@@ -58,71 +60,7 @@ _No tasks currently ready._
 
 ![In Progress](https://img.shields.io/badge/status-in%20progress-d29922)
 
-### `NTN-004` — Browser-verify workspace flows
-
-![Status](https://img.shields.io/badge/status-in%20progress-d29922)
-![Priority](https://img.shields.io/badge/priority-high-f85149)
-![Type](https://img.shields.io/badge/type-validation-0969da)
-![Blocked](https://img.shields.io/badge/blocked-no-238636)
-
-| Field | Value |
-| --- | --- |
-| **ID** | `NTN-004` |
-| **Status** | `In Progress` |
-| **Priority** | `High` |
-| **Type** | `Validation` |
-| **Assigned** | `Agent` |
-| **Created** | `2026-09-15` |
-| **Started** | `2026-09-15` |
-| **Updated** | `2026-09-15` |
-| **Completed** | `—` |
-
-**Goal**
-
-Verify the workspace in a browser the way a user would: board, project page, task peek, search, theme, and a drag-and-drop write.
-
-### Acceptance Criteria
-
-- [ ] Board page shows portfolio columns and project cards.
-- [ ] Opening a project page shows properties and a task kanban.
-- [ ] Opening a task peek shows goal / criteria.
-- [ ] Search finds a known project.
-- [ ] Drag-and-drop of a project or task issues `/api/write` and Markdown state changes, then the card is restored if the move was only a test.
-
-### Dependencies
-
-- `NTN-001`
-- `NTN-002`
-- `NTN-003`
-
-### Blockers
-
-`None`
-
-### Files / Resources
-
-- `ui/public/index.html`
-- `ui/public/app.js`
-- `ui/server.js`
-
-### Implementation Notes
-
-- Restore any test drag so canonical board state is not left dirty unless the move is intentional.
-
-### Validation
-
-- [ ] Browser pass recorded
-- [ ] Write round-trip observed or limitation recorded
-
-### Next Action
-
-Start `node ui/server.js` and exercise the flows.
-
-### Task Activity
-
-| Date | Change |
-| --- | --- |
-| `2026-09-15` | Task created and moved to In Progress. |
+_No tasks currently in progress._
 
 ---
 
@@ -138,9 +76,17 @@ _No blocked tasks._
 
 ![Review](https://img.shields.io/badge/status-review-8250df)
 
+_No tasks currently in review._
+
+---
+
+# Done
+
+![Done](https://img.shields.io/badge/status-done-238636)
+
 ### `NTN-001` — Workspace shell and routing
 
-![Status](https://img.shields.io/badge/status-review-8250df)
+![Status](https://img.shields.io/badge/status-done-238636)
 ![Priority](https://img.shields.io/badge/priority-high-f85149)
 ![Type](https://img.shields.io/badge/type-task-0969da)
 ![Blocked](https://img.shields.io/badge/blocked-no-238636)
@@ -148,14 +94,14 @@ _No blocked tasks._
 | Field | Value |
 | --- | --- |
 | **ID** | `NTN-001` |
-| **Status** | `Review` |
+| **Status** | `Done` |
 | **Priority** | `High` |
 | **Type** | `Task` |
 | **Assigned** | `Agent` |
 | **Created** | `2026-09-15` |
 | **Started** | `2026-09-15` |
 | **Updated** | `2026-09-15` |
-| **Completed** | `—` |
+| **Completed** | `2026-09-15` |
 
 **Goal**
 
@@ -188,7 +134,7 @@ Ship a Notion-like shell: sidebar workspace, project pages list, hash routes for
 
 ### Validation
 
-- [ ] Visual check in browser
+- [x] Visual check in browser
 
 ### Next Action
 
@@ -200,11 +146,10 @@ Covered by NTN-004.
 | --- | --- |
 | `2026-09-15` | Implemented and moved to Review. |
 
----
 
 ### `NTN-002` — Portfolio and task kanban with drag-and-drop writes
 
-![Status](https://img.shields.io/badge/status-review-8250df)
+![Status](https://img.shields.io/badge/status-done-238636)
 ![Priority](https://img.shields.io/badge/priority-high-f85149)
 ![Type](https://img.shields.io/badge/type-task-0969da)
 ![Blocked](https://img.shields.io/badge/blocked-no-238636)
@@ -212,14 +157,14 @@ Covered by NTN-004.
 | Field | Value |
 | --- | --- |
 | **ID** | `NTN-002` |
-| **Status** | `Review` |
+| **Status** | `Done` |
 | **Priority** | `High` |
 | **Type** | `Task` |
 | **Assigned** | `Agent` |
 | **Created** | `2026-09-15` |
 | **Started** | `2026-09-15` |
 | **Updated** | `2026-09-15` |
-| **Completed** | `—` |
+| **Completed** | `2026-09-15` |
 
 **Goal**
 
@@ -251,7 +196,7 @@ Kanban columns for project board states and task workflows, with HTML5 drag-and-
 
 ### Validation
 
-- [ ] Drag-and-drop write observed in browser
+- [x] Drag-and-drop write observed in browser
 
 ### Next Action
 
@@ -263,11 +208,9 @@ Covered by NTN-004.
 | --- | --- |
 | `2026-09-15` | Implemented and moved to Review. |
 
----
-
 ### `NTN-003` — Project pages, task peek, and editors
 
-![Status](https://img.shields.io/badge/status-review-8250df)
+![Status](https://img.shields.io/badge/status-done-238636)
 ![Priority](https://img.shields.io/badge/priority-medium-d29922)
 ![Type](https://img.shields.io/badge/type-task-0969da)
 ![Blocked](https://img.shields.io/badge/blocked-no-238636)
@@ -275,14 +218,14 @@ Covered by NTN-004.
 | Field | Value |
 | --- | --- |
 | **ID** | `NTN-003` |
-| **Status** | `Review` |
+| **Status** | `Done` |
 | **Priority** | `Medium` |
 | **Type** | `Task` |
 | **Assigned** | `Agent` |
 | **Created** | `2026-09-15` |
 | **Started** | `2026-09-15` |
 | **Updated** | `2026-09-15` |
-| **Completed** | `—` |
+| **Completed** | `2026-09-15` |
 
 **Goal**
 
@@ -312,7 +255,7 @@ Open a project as a full page (title, properties, next action, criteria, nested 
 
 ### Validation
 
-- [ ] Click-through in browser
+- [x] Click-through in browser
 
 ### Next Action
 
@@ -324,13 +267,73 @@ Covered by NTN-004.
 | --- | --- |
 | `2026-09-15` | Implemented and moved to Review. |
 
----
+### `NTN-004` — Browser-verify workspace flows
 
-# Done
+![Status](https://img.shields.io/badge/status-done-238636)
+![Priority](https://img.shields.io/badge/priority-high-f85149)
+![Type](https://img.shields.io/badge/type-validation-0969da)
+![Blocked](https://img.shields.io/badge/blocked-no-238636)
 
-![Done](https://img.shields.io/badge/status-done-238636)
+| Field | Value |
+| --- | --- |
+| **ID** | `NTN-004` |
+| **Status** | `Done` |
+| **Priority** | `High` |
+| **Type** | `Validation` |
+| **Assigned** | `Agent` |
+| **Created** | `2026-09-15` |
+| **Started** | `2026-09-15` |
+| **Updated** | `2026-09-15` |
+| **Completed** | `2026-09-15` |
 
-_No completed tasks._
+**Goal**
+
+Verify the workspace in a browser the way a user would: board, project page, task peek, search, theme, and a drag-and-drop write.
+
+### Acceptance Criteria
+
+- [x] Board page shows portfolio columns and project cards.
+- [x] Opening a project page shows properties and a task kanban.
+- [x] Opening a task peek shows goal / criteria.
+- [x] Search finds a known project.
+- [x] Drag-and-drop of a project or task issues `/api/write` and Markdown state changes, then the card is restored if the move was only a test.
+
+### Dependencies
+
+- `NTN-001`
+- `NTN-002`
+- `NTN-003`
+
+### Blockers
+
+`None`
+
+### Files / Resources
+
+- `ui/public/index.html`
+- `ui/public/app.js`
+- `ui/server.js`
+
+### Implementation Notes
+
+- Restore any test drag so canonical board state is not left dirty unless the move is intentional.
+- Browser pass: board, project page, task peek, ⌘K search, table view, dark theme, All tasks, Activity.
+- Write round-trip: `POST /api/write` `task` NTN-001 Ready, live SSE moved the card, then restored to Review. Playwright `dragTo` does not fire HTML5 drop on off-screen columns; pointer-drag handlers were added for real mouse moves.
+
+### Validation
+
+- [x] Browser pass recorded
+- [x] Write round-trip observed or limitation recorded
+
+### Next Action
+
+Start `node ui/server.js` and exercise the flows.
+
+### Task Activity
+
+| Date | Change |
+| --- | --- |
+| `2026-09-15` | Task created and moved to In Progress. |
 
 ---
 
@@ -340,13 +343,13 @@ _No completed tasks._
 | --- | ---: |
 | Backlog | 0 |
 | Ready | 0 |
-| In Progress | 1 |
+| In Progress | 0 |
 | Blocked | 0 |
-| Review | 3 |
-| Done | 0 |
+| Review | 0 |
+| Done | 4 |
 | **Total** | **4** |
 
-**Completion:** `0%`
+**Completion:** `100%`
 
 ---
 
@@ -358,24 +361,10 @@ _No completed tasks._
 | `2026-09-15` | `NTN-001` | Implemented workspace shell; Review. |
 | `2026-09-15` | `NTN-002` | Implemented kanban + drag writes; Review. |
 | `2026-09-15` | `NTN-003` | Implemented pages + peek; Review. |
-| `2026-09-15` | `NTN-004` | Started browser verification. |
+| `2026-09-15` | `NTN-004` | Browser verification complete; all NTN tasks Done. |
 
 ---
 
 ## Active Task Detail
 
-### `NTN-004` — Browser-verify workspace flows
-
-![Status](https://img.shields.io/badge/status-in%20progress-d29922)
-
-**Objective**
-
-Confirm the Notion-like dashboard works end to end in a browser.
-
-**Current Work**
-
-Starting the local server and exercising board, project, task, search, and drag-and-drop.
-
-**Next Action**
-
-Run `node ui/server.js` and complete the browser pass.
+> No primary active task. Project is in Review.

@@ -1,8 +1,8 @@
 # Notion-like Agent Dashboard
 
-![Status](https://img.shields.io/badge/status-active-238636)
+![Status](https://img.shields.io/badge/status-review-8250df)
 ![Priority](https://img.shields.io/badge/priority-high-f85149)
-![Progress](https://img.shields.io/badge/progress-90%25-238636)
+![Progress](https://img.shields.io/badge/progress-100%25-238636)
 ![Updated](https://img.shields.io/badge/updated-2026--09--15-6e7781)
 
 [Board](../BOARD.md) · [Tasks](../tasks/notion-dashboard-tasks.md)
@@ -17,7 +17,7 @@
 | --- | --- |
 | **Project ID** | `NTN` |
 | **Project Name** | Notion-like Agent Dashboard |
-| **Status** | `Active` |
+| **Status** | `Review` |
 | **Priority** | `High` |
 | **Owner** | `Agent` |
 | **Started** | `2026-09-15` |
@@ -41,29 +41,29 @@ The project is considered complete when:
 - [x] Portfolio projects can be dragged between board-state columns and the write lands in Markdown via `/api/write`.
 - [x] A project page shows properties plus a task kanban; tasks can be dragged between workflow columns.
 - [x] Search (`⌘K`) finds projects and tasks; live SSE still refreshes the UI.
-- [ ] Browser verification of the main flows has been recorded.
+- [x] Browser verification of the main flows has been recorded.
 
 ---
 
 ## Current State
 
-![State](https://img.shields.io/badge/current-active-238636)
+![State](https://img.shields.io/badge/current-review-8250df)
 
 **Summary**
 
-Workspace shell, portfolio kanban, project pages, all-tasks board, activity, command palette, theme toggle, and HTML5 drag-and-drop writes are implemented in `ui/public/*` on the zero-dependency Node server.
+Workspace implemented and browser-verified: sidebar pages, portfolio kanban/table, project pages, task peek, command palette, theme toggle, live SSE, and write round-trip. Awaiting user review of PR 2.
 
 **Current Focus**
 
-Browser-verify board navigation, project pages, search, and drag-and-drop writes.
+User review of the Notion-like dashboard PR.
 
 **Next Milestone**
 
-Recorded UI verification, then move the project to Review.
+User acceptance; then mark the project Complete.
 
 **Next Action**
 
-Exercise the dashboard in a browser against `node ui/server.js`.
+Review the dashboard PR in the browser with node ui/server.js.
 
 ---
 

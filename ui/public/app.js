@@ -668,6 +668,8 @@
     }
   }
 
+  let pointerDrag = null;
+
   function enableDrag(el, payload) {
     el.addEventListener('dragstart', (e) => {
       el.classList.add('dragging');
@@ -678,6 +680,10 @@
       el.classList.remove('dragging');
       skipClick = true;
       setTimeout(() => { skipClick = false; }, 80);
+    });
+    el.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      pointerDrag = { payload, startX: e.clientX, startY: e.clientY, moved: false, el };
     });
   }
   function enableDrop(col, onDrop) {
@@ -693,7 +699,32 @@
       try { payload = JSON.parse(e.dataTransfer.getData('application/json')); } catch (_) { return; }
       await onDrop(payload);
     });
+    col._onCardDrop = onDrop;
   }
+
+  document.addEventListener('pointermove', (e) => {
+    if (!pointerDrag) return;
+    if (!pointerDrag.moved && Math.hypot(e.clientX - pointerDrag.startX, e.clientY - pointerDrag.startY) < 6) return;
+    pointerDrag.moved = true;
+    pointerDrag.el.classList.add('dragging');
+    document.querySelectorAll('.col').forEach((c) => c.classList.remove('drag-over'));
+    const over = document.elementFromPoint(e.clientX, e.clientY);
+    const col = over && over.closest('.col');
+    if (col) col.classList.add('drag-over');
+  });
+  document.addEventListener('pointerup', async (e) => {
+    if (!pointerDrag) return;
+    const drag = pointerDrag;
+    pointerDrag = null;
+    document.querySelectorAll('.col').forEach((c) => c.classList.remove('drag-over'));
+    drag.el.classList.remove('dragging');
+    if (!drag.moved) return;
+    skipClick = true;
+    setTimeout(() => { skipClick = false; }, 80);
+    const over = document.elementFromPoint(e.clientX, e.clientY);
+    const col = over && over.closest('.col');
+    if (col && typeof col._onCardDrop === 'function') await col._onCardDrop(drag.payload);
+  });
 
   function renderColsPop(host) {
     host.hidden = !host.hidden;
