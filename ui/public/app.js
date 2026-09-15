@@ -28,6 +28,15 @@
     customBody: $('#customBody'),
     customClose: $('#customClose'),
     toast: $('#toast'),
+    focusBanner: $('#focusBanner'),
+    attentionBody: $('#attentionBody'),
+    attentionCount: $('#attentionCount'),
+    taskIndex: $('#taskIndex'),
+    activityIndex: $('#activityIndex'),
+    searchInput: $('#searchInput'),
+    refreshBtn: $('#refreshBtn'),
+    pageTitle: $('#pageTitle'),
+    pageSubtitle: $('#pageSubtitle'),
   };
 
   const BOARD_STATES = ['Planning', 'Ready', 'Active', 'Blocked', 'Review', 'Paused', 'Complete', 'Archived'];
@@ -53,6 +62,15 @@
   let draftCol = null;
   let stateBySlug = {};
   let editing = false;
+  let activeView = 'overview';
+  let searchTerm = '';
+
+  const VIEW_META = {
+    overview: ['Overview', 'A focused view of what needs attention next.'],
+    projects: ['Projects', 'Portfolio state, progress, and project-level context.'],
+    tasks: ['Tasks', 'The execution queue across every project.'],
+    activity: ['Activity', 'A chronological record of board changes.'],
+  };
 
   function editingSlotKey() {
     return { slug: currentSlug, task: currentTask ? currentTask.id : null };
@@ -256,6 +274,54 @@
           .map((r) => `<div class="aux-row"><span class="when">${esc(r.Date || '')}</span><span>${esc(r.Change || '')}</span></div>`)
           .join('')
       : '<div class="aux-empty">No board activity recorded.</div>';
+  }
+
+  function allCards() {
+    const cards = [];
+    for (const sec of (data && data.board && data.board.sections) || []) for (const card of sec.projects || []) cards.push(card);
+    return cards;
+  }
+
+  function allTasks() {
+    const rows = [];
+    for (const pr of (data && data.projects) || []) {
+      for (const workflow of WORKFLOW_ORDER) for (const task of (pr.taskBoard && pr.taskBoard.workflows && pr.taskBoard.workflows[workflow]) || []) rows.push({ ...task, slug: pr.slug, projectName: (pr.project && pr.project.overview && pr.project.overview['Project Name']) || pr.slug, workflow });
+    }
+    return rows;
+  }
+
+  function renderWorkspaceViews() {
+    if (!data) return;
+    const focus = data.board && data.board.focus || {};
+    if (els.focusBanner) els.focusBanner.innerHTML = `<div class="focus-kicker">Current focus</div><h2>${esc(focus['Primary Project'] || 'No primary project selected')}</h2><p>${esc(focus['Current Objective'] || focus['Next Action'] || 'Set a focus in BOARD.md to give agents a clear starting point.')}</p>`;
+    const attention = allCards().filter((card) => ['Blocked', 'Review'].includes(stateBySlug[slugOfProjectRef(card.refs.project)]));
+    if (els.attentionCount) els.attentionCount.textContent = `${attention.length} items`;
+    if (els.attentionBody) els.attentionBody.innerHTML = attention.length ? `<div class="attention-list">${attention.map((card) => `<div class="attention-item"><span class="attention-dot"></span><div><b>${esc(card.name)}</b><small>${esc(stateBySlug[slugOfProjectRef(card.refs.project)] || 'Needs review')} · click to open project</small></div></div>`).join('')}</div>` : '<div class="aux-empty">Nothing is blocked or awaiting review.</div>';
+    renderMetrics(); renderTaskIndex(); renderActivityIndex();
+  }
+
+  function renderMetrics() {
+    const o = data.board && data.board.overview || {}; const values = [['Projects', o['Total Projects'] || allCards().length], ['Active', o['Active Projects'] || 0], ['Blocked', o['Blocked Projects'] || 0], ['In review', o['Projects in Review'] || 0], ['Complete', o['Completed Projects'] || 0]];
+    if (els.countsBody) els.countsBody.innerHTML = values.map(([label, value]) => `<div class="metric"><div class="metric-label">${label}</div><div class="metric-value">${esc(value)}</div></div>`).join('');
+  }
+
+  function renderTaskIndex() {
+    if (!els.taskIndex) return; const term = searchTerm.toLowerCase(); const groups = {};
+    for (const task of allTasks()) if (!term || `${task.title || ''} ${task.id} ${task.projectName}`.toLowerCase().includes(term)) (groups[task.slug] ||= { name: task.projectName, tasks: [] }).tasks.push(task);
+    els.taskIndex.innerHTML = Object.keys(groups).length ? Object.values(groups).map((group) => `<section class="task-project"><div class="task-project-head"><h3>${esc(group.name)}</h3><small>${group.tasks.length} tasks</small></div>${group.tasks.map((task) => `<div class="task-row" data-task-slug="${esc(task.slug)}" data-task-id="${esc(task.id)}"><span class="task-id">${esc(task.id)}</span><span>${esc(task.title || task.name || '')}</span><span class="task-state">${esc(task.workflow)}</span></div>`).join('')}</section>`).join('') : '<div class="empty">No matching tasks.</div>';
+  }
+
+  function renderActivityIndex() {
+    if (!els.activityIndex) return; const rows = data.board && data.board.activity || [];
+    els.activityIndex.innerHTML = `<div class="timeline-list">${(rows.length ? rows : [{ Date: '', Change: 'No board activity recorded.' }]).map((row) => `<div class="timeline-item"><span class="when">${esc(row.Date || '')}</span><p>${esc(row.Change || '')}</p></div>`).join('')}</div>`;
+  }
+
+  function setView(view) {
+    activeView = view; const meta = VIEW_META[view] || VIEW_META.overview;
+    document.querySelectorAll('.view').forEach((el) => el.classList.toggle('hidden', el.id !== `${view}View`));
+    document.querySelectorAll('.nav-item').forEach((el) => el.classList.toggle('active', el.dataset.view === view));
+    if (els.pageTitle) els.pageTitle.textContent = meta[0]; if (els.pageSubtitle) els.pageSubtitle.textContent = meta[1];
+    if (view === 'projects') renderBoard();
   }
 
   // ---------- board columns ----------
@@ -974,6 +1040,8 @@
     renderFocus();
     renderCounts();
     renderAux();
+    computeStateBySlug();
+    renderWorkspaceViews();
     renderBoard();
     if (isOpen(els.drawerOverlay) && currentSlug) openDrawer(currentSlug);
     if (isOpen(els.taskOverlay) && currentTask) openTask(currentTask.slug, currentTask.id);
@@ -1002,6 +1070,15 @@
   }
 
   // ---------- events ----------
+
+  document.querySelectorAll('[data-view]').forEach((button) => button.addEventListener('click', () => setView(button.dataset.view)));
+  if (els.searchInput) els.searchInput.addEventListener('input', () => { searchTerm = els.searchInput.value.trim(); renderTaskIndex(); renderBoard(); });
+  if (els.refreshBtn) els.refreshBtn.addEventListener('click', async () => { try { apply(await fetch('/api/state').then((r) => r.json())); toast('State refreshed'); } catch (err) { toast('Refresh failed'); } });
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); els.searchInput && els.searchInput.focus(); }
+    if (!e.target.closest('input,textarea,select') && ['1','2','3','4'].includes(e.key)) setView(['overview','projects','tasks','activity'][Number(e.key) - 1]);
+  });
+  if (els.taskIndex) els.taskIndex.addEventListener('click', (e) => { const row = e.target.closest('[data-task-id]'); if (row) openTask(row.dataset.taskSlug, row.dataset.taskId); });
 
   els.colsBtn.addEventListener('click', (e) => {
     e.stopPropagation();

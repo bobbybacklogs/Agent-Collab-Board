@@ -3,90 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Local Board Dashboard</title>
+  <meta name="theme-color" content="#161716" />
+  <title>Agent Collab Board</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="logo" aria-hidden="true">▦</span>
-      <div>
-        <h1>Local Board Dashboard</h1>
-        <p class="repo" id="repo">…</p>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <span id="live" class="live off" title="Live updates">
-        <span class="dot"></span>
-        <span id="liveText">connecting…</span>
-      </span>
-      <span id="updated" class="updated"></span>
-    </div>
-  </header>
-
-  <main class="layout">
-    <aside class="summary">
-      <section class="panel focus" id="focus-panel">
-        <h2>Current Focus</h2>
-        <div id="focus-body"></div>
-      </section>
-
-      <section class="panel counts" id="counts-panel">
-        <h2>Portfolio</h2>
-        <div id="counts-body" class="counts"></div>
-      </section>
-
-      <section class="panel" id="aux-panel">
-        <h2>Board Activity</h2>
-        <div id="aux-body"></div>
-      </section>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Workspace navigation">
+      <div class="brand"><span class="logo">◈</span><div><strong>Agent Collab</strong><span id="repo" class="repo">Loading repository…</span></div></div>
+      <div class="workspace-label">Workspace</div>
+      <nav class="nav" id="nav">
+        <button class="nav-item active" data-view="overview"><span>⌂</span> Overview <kbd>1</kbd></button>
+        <button class="nav-item" data-view="projects"><span>▦</span> Projects <kbd>2</kbd></button>
+        <button class="nav-item" data-view="tasks"><span>✓</span> Tasks <kbd>3</kbd></button>
+        <button class="nav-item" data-view="activity"><span>◷</span> Activity <kbd>4</kbd></button>
+      </nav>
+      <div class="sidebar-footer"><div class="handoff"><span class="signal"></span><div><b>Agent handoff</b><small>Canonical Markdown state</small></div></div><span id="live" class="live off"><span class="dot"></span><span id="liveText">connecting…</span></span></div>
     </aside>
-
-    <section class="board-area">
-      <div class="board-toolbar">
-        <div class="bt-left">
-          <span class="bt-title">Board</span>
-          <div class="colbtn-wrap">
-            <button id="colsBtn" class="toolbtn">
-              <span class="eye-ico" aria-hidden="true">◉</span> Columns
-              <span id="colsCount" class="bt-count"></span>
-            </button>
-            <div id="colsPop" class="popover" hidden></div>
-          </div>
-          <button id="addColBtn" class="toolbtn primary">+ Custom column</button>
-        </div>
-        <div class="bt-right">
-          <span id="colsHint" class="bt-hint"></span>
-        </div>
-      </div>
-      <section class="board" id="board"
-        aria-label="Projects grouped by board state and custom columns"></section>
-    </section>
-  </main>
-
-  <div id="drawerOverlay" class="overlay">
-    <aside id="drawer" class="drawer" role="dialog" aria-label="Project detail">
-      <button id="drawerClose" class="close" aria-label="Close">✕</button>
-      <div id="drawerBody"></div>
-    </aside>
+    <main class="workspace">
+      <header class="page-head"><div><div class="eyebrow">Command center / <span id="updated"></span></div><h1 id="pageTitle">Overview</h1><p id="pageSubtitle">A focused view of what needs attention next.</p></div><div class="head-actions"><label class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="Search projects and tasks" aria-label="Search projects and tasks"><kbd>⌘ K</kbd></label><button id="refreshBtn" class="icon-button" title="Refresh state">↻</button></div></header>
+      <section class="view" id="overviewView">
+        <div class="focus-banner" id="focusBanner"></div>
+        <div class="metrics" id="countsBody"></div>
+        <div class="content-grid"><section class="surface attention"><div class="section-head"><div><span class="eyebrow">Signal queue</span><h2>Needs attention</h2></div><span class="section-count" id="attentionCount"></span></div><div id="attentionBody"></div></section><section class="surface next"><div class="section-head"><div><span class="eyebrow">Continuity</span><h2>Next action</h2></div></div><div id="focus-body"></div></section></div>
+        <section class="surface activity-preview"><div class="section-head"><div><span class="eyebrow">Recent changes</span><h2>Activity</h2></div><button class="text-button" data-view="activity">View all →</button></div><div id="aux-body"></div></section>
+      </section>
+      <section class="view hidden" id="projectsView"><div class="toolbar"><div><span class="eyebrow">Portfolio</span><h2>Projects</h2></div><div class="toolbar-actions"><span id="colsHint" class="bt-hint"></span><div class="colbtn-wrap"><button id="colsBtn" class="toolbtn">◉ Columns <span id="colsCount" class="bt-count"></span></button><div id="colsPop" class="popover" hidden></div></div><button id="addColBtn" class="toolbtn primary">+ Custom column</button></div></div><section class="board" id="board" aria-label="Projects grouped by board state"></section></section>
+      <section class="view hidden" id="tasksView"><div class="toolbar"><div><span class="eyebrow">Execution</span><h2>Tasks</h2></div><span class="view-note">Grouped by project and workflow state</span></div><div class="task-index" id="taskIndex"></div></section>
+      <section class="view hidden" id="activityView"><div class="toolbar"><div><span class="eyebrow">Timeline</span><h2>Activity</h2></div></div><section class="surface timeline" id="activityIndex"></section></section>
+    </main>
   </div>
-
-  <div id="taskOverlay" class="overlay">
-    <section id="taskModal" class="taskmodal" role="dialog" aria-label="Task detail">
-      <button id="taskClose" class="close" aria-label="Close">✕</button>
-      <div id="taskBody"></div>
-    </section>
-  </div>
-
-  <div id="customOverlay" class="overlay">
-    <section id="customModal" class="taskmodal colform" role="dialog" aria-label="Custom column">
-      <button id="customClose" class="close" aria-label="Close">✕</button>
-      <div id="customBody"></div>
-    </section>
-  </div>
-
+  <div id="drawerOverlay" class="overlay"><aside id="drawer" class="drawer" role="dialog" aria-label="Project detail"><button id="drawerClose" class="close" aria-label="Close">×</button><div id="drawerBody"></div></aside></div>
+  <div id="taskOverlay" class="overlay"><section id="taskModal" class="taskmodal" role="dialog" aria-label="Task detail"><button id="taskClose" class="close" aria-label="Close">×</button><div id="taskBody"></div></section></div>
+  <div id="customOverlay" class="overlay"><section id="customModal" class="taskmodal colform" role="dialog" aria-label="Custom column"><button id="customClose" class="close" aria-label="Close">×</button><div id="customBody"></div></section></div>
   <div id="toast" class="toast" hidden></div>
-
   <script src="/app.js"></script>
 </body>
 </html>
